@@ -18,7 +18,12 @@ function systemPrefersDark() {
 
 class Theme {
   constructor() {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    let saved = null;
+    try {
+      saved = localStorage.getItem(STORAGE_KEY);
+    } catch {
+      /* file:// 某些浏览器禁用存储，使用 system 默认值 */
+    }
     this.mode = MODES.includes(saved) ? saved : 'system';
 
     this._mql = window.matchMedia('(prefers-color-scheme: dark)');
@@ -46,7 +51,11 @@ class Theme {
   setMode(mode) {
     if (!MODES.includes(mode)) return;
     this.mode = mode;
-    localStorage.setItem(STORAGE_KEY, mode);
+    try {
+      localStorage.setItem(STORAGE_KEY, mode);
+    } catch {
+      /* file:// 存储不可用时仍切换当前页面主题 */
+    }
     this.apply();
     this._persist();
     window.dispatchEvent(new CustomEvent('theme:change', { detail: { mode } }));

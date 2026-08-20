@@ -5,6 +5,8 @@
  */
 
 import { auth } from '../core/auth.js';
+import { isFileRuntime } from '../core/runtime.js';
+import { offlineRequest } from './offline-api.js';
 import { AUTH_HEADER } from '../../shared/constants.js';
 
 export class ApiError extends Error {
@@ -22,6 +24,11 @@ export class ApiError extends Error {
  */
 export async function fetcher(path, options = {}) {
   const { method = 'GET', body, headers = {}, signal } = options;
+
+  if (isFileRuntime) {
+    if (signal?.aborted) throw new DOMException('The operation was aborted.', 'AbortError');
+    return offlineRequest(path, { method, body, signal });
+  }
 
   const h = new Headers(headers);
   h.set('accept', 'application/json');

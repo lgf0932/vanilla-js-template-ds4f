@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 
@@ -25,6 +25,13 @@ test('production build includes shared browser modules and valid JavaScript', ()
   assert.equal(existsSync(join(ROOT, 'dist/shared/constants.js')), true);
   assert.equal(existsSync(join(ROOT, 'dist/shared/validation.js')), true);
   assert.equal(existsSync(join(ROOT, 'dist/shared/constants.test.js')), false);
+  assert.equal(existsSync(join(ROOT, 'dist/app/lib/offline-api.js')), true);
+  assert.equal(existsSync(join(ROOT, 'dist/app/file-preview.js')), true);
+
+  const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf8');
+  assert.match(html, /data-nova-src="\/app\/core\/bootstrap\.js\?v=[a-f0-9]{8}"/);
+  assert.match(html, /data-nova-loader/);
+  assert.match(html, /app\/file-preview\.js/);
 
   for (const file of collectJavaScriptFiles(join(ROOT, 'dist'))) {
     const syntax = spawnSync(process.execPath, ['--check', file], {

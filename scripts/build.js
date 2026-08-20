@@ -79,7 +79,7 @@ async function main() {
   // 指纹化静态引用（仅 index.html 中显式 href/src 的 /app /public 资源）
   const indexPath = join(DIST, 'index.html');
   const html = readFileSync(indexPath, 'utf8');
-  const refs = [...html.matchAll(/(?:href|src)="(\/(?:app|public)\/[^"]+)"/g)].map((m) => m[1]);
+  const refs = [...html.matchAll(/(?:href|src|data-nova-href|data-nova-src)="(\/(?:app|public)\/[^"]+)"/g)].map((m) => m[1]);
   let next = html;
   for (const ref of refs) {
     const file = join(DIST, ref);

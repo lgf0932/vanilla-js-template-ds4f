@@ -34,6 +34,7 @@
   --warning-foreground: 26 83% 14%;
 
   --border: 240 5.9% 90%;
+  --border-width: 1px;
   --input: 240 5.9% 90%;
   --ring: 240 5.9% 10%;
   --backdrop: 240 10% 3.9%;

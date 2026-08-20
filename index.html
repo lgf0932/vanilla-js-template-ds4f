@@ -5,17 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Nova — 零第三方依赖、模块化、同构部署的应用控制台" />
   <title>Nova 控制台</title>
-  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" data-nova-href="/public/favicon.svg" />
   <!-- Zero-Build：原生 ESM + Import Map，不打包；模块按路由懒加载 -->
   <script type="importmap">
     {
       "imports": {}
     }
   </script>
-  <link rel="stylesheet" href="/app/styles/tokens.css" />
-  <link rel="stylesheet" href="/app/styles/reset.css" />
-  <link rel="stylesheet" href="/app/styles/utilities.css" />
-  <link rel="stylesheet" href="/app/styles/animations.css" />
+  <link rel="stylesheet" data-nova-href="/app/styles/tokens.css" />
+  <link rel="stylesheet" data-nova-href="/app/styles/reset.css" />
+  <link rel="stylesheet" data-nova-href="/app/styles/utilities.css" />
+  <link rel="stylesheet" data-nova-href="/app/styles/animations.css" />
+  <script>
+    (() => {
+      const root = location.protocol === 'file:'
+        ? new URL('.', location.href)
+        : new URL('/', location.href);
+      window.NOVA_ASSET_ROOT = root;
+      for (const element of document.querySelectorAll('[data-nova-href]')) {
+        const path = element.dataset.novaHref.replace(/^\/+/, '');
+        element.href = new URL(path, root).href;
+      }
+    })();
+  </script>
 </head>
 <body>
   <!-- 壳层由 bootstrap 挂载：app-shell（sidebar + header + main）或 auth-gate -->
@@ -25,6 +37,22 @@
       此应用需要启用 JavaScript 才能运行。
     </div>
   </noscript>
-  <script type="module" src="/app/core/bootstrap.js"></script>
+  <script type="module" data-nova-src="/app/core/bootstrap.js"></script>
+  <script data-nova-loader>
+    (() => {
+      const placeholder = document.querySelector('script[data-nova-src]');
+      if (location.protocol === 'file:') {
+        const preview = document.createElement('script');
+        preview.src = new URL('app/file-preview.js', window.NOVA_ASSET_ROOT).href;
+        placeholder.remove();
+        document.head.appendChild(preview);
+        return;
+      }
+      const module = document.createElement('script');
+      module.type = 'module';
+      module.src = new URL(placeholder.dataset.novaSrc.replace(/^\/+/, ''), window.NOVA_ASSET_ROOT).href;
+      placeholder.replaceWith(module);
+    })();
+  </script>
 </body>
 </html>

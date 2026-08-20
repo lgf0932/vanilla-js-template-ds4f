@@ -12,6 +12,7 @@ import { router } from './router.js';
 import { i18n, t } from './i18n.js';
 import { theme } from './theme.js';
 import { auth } from './auth.js';
+import { isFileRuntime } from './runtime.js';
 import { loadModuleConfigs } from '../modules/registry.js';
 
 // 副作用导入：注册全部公共组件与壳层组件
@@ -127,6 +128,11 @@ document.addEventListener('click', (e) => {
   if (!a || e.defaultPrevented || e.button !== 0 || a.target === '_blank') return;
   const href = a.getAttribute('href');
   if (!href || !href.startsWith('/') || href.startsWith('//')) return;
+  if (isFileRuntime) {
+    e.preventDefault();
+    router.navigate(href);
+    return;
+  }
   const url = new URL(href, window.location.origin);
   if (url.origin !== window.location.origin) return;
   e.preventDefault();

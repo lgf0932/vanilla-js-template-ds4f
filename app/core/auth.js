@@ -8,15 +8,17 @@
  */
 
 import { SESSION_DURATIONS, durationIsSessionOnly } from '../../shared/constants.js';
+import { isFileRuntime } from './runtime.js';
 
 const TOKEN_KEY = 'nova:auth:token';
 const EXPIRES_KEY = 'nova:auth:expires';
 
 function readSession() {
-  return (
-    sessionStorage.getItem(TOKEN_KEY) ||
-    localStorage.getItem(TOKEN_KEY)
-  );
+  try {
+    return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
 }
 
 class Auth {
@@ -28,7 +30,12 @@ class Auth {
   getToken() {
     const token = readSession();
     if (!token) return null;
-    const expires = sessionStorage.getItem(EXPIRES_KEY) || localStorage.getItem(EXPIRES_KEY);
+    let expires = null;
+    try {
+      expires = sessionStorage.getItem(EXPIRES_KEY) || localStorage.getItem(EXPIRES_KEY);
+    } catch {
+      expires = null;
+    }
     if (expires && Date.parse(expires) <= Date.now()) {
       this.clearSession();
       return null;
@@ -39,16 +46,24 @@ class Auth {
   /** 写入会话；duration=session 存 sessionStorage，其余存 localStorage + 过期时间 */
   setSession({ token, expiresAt }, duration) {
     this.clearSession();
-    const store = durationIsSessionOnly(duration) ? sessionStorage : localStorage;
-    store.setItem(TOKEN_KEY, token);
-    if (expiresAt) store.setItem(EXPIRES_KEY, expiresAt);
+    try {
+      const store = durationIsSessionOnly(duration) ? sessionStorage : localStorage;
+      store.setItem(TOKEN_KEY, token);
+      if (expiresAt) store.setItem(EXPIRES_KEY, expiresAt);
+    } catch {
+      /* file:// 某些浏览器禁用存储，预览仍可在当前页面运行 */
+    }
   }
 
   clearSession() {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(EXPIRES_KEY);
-    sessionStorage.removeItem(TOKEN_KEY);
-    sessionStorage.removeItem(EXPIRES_KEY);
+    try {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(EXPIRES_KEY);
+      sessionStorage.removeItem(TOKEN_KEY);
+      sessionStorage.removeItem(EXPIRES_KEY);
+    } catch {
+      /* file:// 存储不可用时无需清理 */
+    }
   }
 
   /** 会话失效：清空凭证并广播，bootstrap 据此切换到密码输入页 */
@@ -64,6 +79,13 @@ class Auth {
    * @returns {Promise<{token:string, expiresAt:string|null}>}
    */
   async login(password, duration) {
+    if (isFileRuntime) {
+      const data = { token: 'nova-offline-preview', expiresAt: null };
+      this.setSession(data, 'session');
+      window.dispatchEvent(new CustomEvent('auth:success', { detail: { duration, offline: true } }));
+      return data;
+    }
+
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'content-type': 'application/json', accept: 'application/json' },

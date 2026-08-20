@@ -4,6 +4,8 @@
  * 路由表由模块注册表派生（bootstrap 负责登记），支持二级路径映射子模块。
  */
 
+import { isFileRuntime } from './runtime.js';
+
 /** 规范化路径：去尾部斜杠，保证 '/' 唯一 */
 export function normalizePath(path) {
   const p = path || '/';
@@ -11,15 +13,22 @@ export function normalizePath(path) {
   return p === '' ? '/' : p;
 }
 
+function currentLocationPath() {
+  if (!isFileRuntime) return normalizePath(window.location.pathname);
+  const hash = window.location.hash.replace(/^#/, '');
+  return normalizePath(hash || '/');
+}
+
 class Router {
   constructor() {
     /** @type {Map<string, {path:string, mount:(viewport:HTMLElement)=>Promise<void>|void}>} */
     this.routes = new Map();
-    this.currentPath = normalizePath(window.location.pathname);
+    this.currentPath = currentLocationPath();
     this.onUnmatched = null;
 
-    window.addEventListener('popstate', () => {
-      this.currentPath = normalizePath(window.location.pathname);
+    const eventName = isFileRuntime ? 'hashchange' : 'popstate';
+    window.addEventListener(eventName, () => {
+      this.currentPath = currentLocationPath();
       this.render();
     });
   }
@@ -38,6 +47,11 @@ class Router {
     const normalized = normalizePath(path);
     if (normalized === this.currentPath) {
       this.render();
+      return;
+    }
+    if (isFileRuntime) {
+      // file:// 不能可靠地 pushState 到新的磁盘路径，使用 hash 保留同一个 index.html。
+      window.location.hash = normalized === '/' ? '' : normalized;
       return;
     }
     if (replace) window.history.replaceState({}, '', normalized);

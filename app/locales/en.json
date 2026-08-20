@@ -92,6 +92,7 @@
     "weakPassword": "Password must be at least 8 characters",
     "mismatch": "Passwords do not match",
     "failed": "Login failed",
+    "offlineNote": "Local file preview: data stays in this page's memory and never connects to a server.",
     "sessionDuration": "Session duration",
     "duration": {
       "4h": "4 hours",

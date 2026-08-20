@@ -11,6 +11,7 @@
 import { define, attachTemplate, qs } from '../ui/base.js';
 import { auth } from '../../core/auth.js';
 import { t } from '../../core/i18n.js';
+import { isFileRuntime } from '../../core/runtime.js';
 import { SESSION_DURATIONS } from '../../../shared/constants.js';
 
 class AppAuthGate extends HTMLElement {
@@ -21,13 +22,18 @@ class AppAuthGate extends HTMLElement {
     attachTemplate(this, TEMPLATE);
     this._bindEnter();
 
-    // 探测是否需要初始化密码（公开只读接口，仅返回布尔，不含任何敏感信息）
-    try {
-      const res = await fetch('/api/auth/status', { headers: { accept: 'application/json' } });
-      const data = await res.json().catch(() => ({}));
-      this._needsSetup = Boolean(data?.needsSetup);
-    } catch {
-      this._needsSetup = false;
+    if (isFileRuntime) {
+      // 双击预览没有后端，直接进入内存预览模式，不发起 file:// API 请求。
+      this._needsSetup = true;
+    } else {
+      // 探测是否需要初始化密码（公开只读接口，仅返回布尔，不含任何敏感信息）
+      try {
+        const res = await fetch('/api/auth/status', { headers: { accept: 'application/json' } });
+        const data = await res.json().catch(() => ({}));
+        this._needsSetup = Boolean(data?.needsSetup);
+      } catch {
+        this._needsSetup = false;
+      }
     }
     this.render();
   }
@@ -63,6 +69,9 @@ class AppAuthGate extends HTMLElement {
       : expired
         ? t('auth.lockedSubtitle')
         : t('auth.subtitle');
+    const offlineNote = qs(this.shadowRoot, '.offline-note');
+    offlineNote.hidden = !isFileRuntime;
+    offlineNote.textContent = isFileRuntime ? t('auth.offlineNote') : '';
 
     const password = qs(this.shadowRoot, '#password');
     password.setAttribute('label', t('auth.passwordLabel'));
@@ -128,6 +137,8 @@ const TEMPLATE = `
     justify-content: center; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
   .title { font-size: var(--text-xl); font-weight: 700; }
   .subtitle { font-size: var(--text-sm); color: hsl(var(--muted-foreground)); }
+  .offline-note { font-size: var(--text-xs); color: hsl(var(--muted-foreground)); text-align: center;
+    padding: var(--spacing-2) var(--spacing-3); border-radius: var(--radius); background: hsl(var(--muted)); }
   .form { display: grid; gap: var(--spacing-3); }
   .error { font-size: var(--text-xs); color: hsl(var(--destructive)); min-height: 1em; text-align: center; }
 </style>
@@ -136,6 +147,7 @@ const TEMPLATE = `
     <span class="brand-icon"><ui-icon name="lock" size="xl"></ui-icon></span>
     <h1 class="title"></h1>
     <p class="subtitle"></p>
+    <p class="offline-note" hidden></p>
   </div>
   <div class="form">
     <ui-input id="password" type="password" name="password"></ui-input>

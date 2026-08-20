@@ -5,6 +5,7 @@
 
 import './components/dashboard-view.js';
 import { store } from './store.js';
+import { loadJson } from '../../core/runtime.js';
 
 /** 挂载仪表盘视图到容器 */
 export function mount(el) {
@@ -16,11 +17,7 @@ export function mount(el) {
 /** 懒加载语言包（fetch .json，与模块 JS 同一次路由懒加载触发） */
 export async function loadLocale(lang) {
   try {
-    const res = await fetch(new URL(`./locales/${lang}.json`, import.meta.url), {
-      cache: 'no-store',
-      headers: { accept: 'application/json' },
-    });
-    return res.ok ? await res.json() : null;
+    return await loadJson(`./locales/${lang}.json`, import.meta.url);
   } catch {
     return null;
   }

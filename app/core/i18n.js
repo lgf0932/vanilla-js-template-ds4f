@@ -7,11 +7,17 @@
  */
 
 import { LANGUAGE_CODES } from '../../shared/constants.js';
+import { loadJson } from './runtime.js';
 
 const STORAGE_KEY = 'nova:lang';
 
 function detectLanguage() {
-  const saved = localStorage.getItem(STORAGE_KEY);
+  let saved = null;
+  try {
+    saved = localStorage.getItem(STORAGE_KEY);
+  } catch {
+    /* file:// 某些浏览器会禁用存储，使用浏览器语言继续启动 */
+  }
   if (saved && LANGUAGE_CODES.includes(saved)) return saved;
   const nav = (navigator.language || 'zh-CN').toLowerCase();
   if (nav.includes('tw') || nav.includes('hant')) return 'zh-TW';
@@ -43,9 +49,7 @@ class I18n {
   /** 获取语言包（相对导入者目录的路径，由调用方保证） */
   async _fetchPack(url) {
     try {
-      const res = await fetch(url, { cache: 'no-store', headers: { accept: 'application/json' } });
-      if (!res.ok) return null;
-      return await res.json();
+      return await loadJson(url, import.meta.url);
     } catch {
       return null;
     }
@@ -55,7 +59,11 @@ class I18n {
   async switch(lang) {
     if (!LANGUAGE_CODES.includes(lang) || lang === this.lang) return;
     this.lang = lang;
-    localStorage.setItem(STORAGE_KEY, lang);
+    try {
+      localStorage.setItem(STORAGE_KEY, lang);
+    } catch {
+      /* file:// 存储不可用时仍允许本次页面切换 */
+    }
     await this.loadShell();
     for (const fn of this._listeners) fn(this.lang);
   }

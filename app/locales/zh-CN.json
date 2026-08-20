@@ -92,6 +92,7 @@
     "weakPassword": "密码至少需要 8 个字符",
     "mismatch": "两次输入的密码不一致",
     "failed": "登录失败",
+    "offlineNote": "本地文件预览模式：数据仅保存在当前页面内存中，不会连接服务器。",
     "sessionDuration": "会话时长",
     "duration": {
       "4h": "4 小时",
