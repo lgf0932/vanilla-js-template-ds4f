@@ -1,16 +1,45 @@
-name: Deploy Deno
+name: deploy-deno
 
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to deploy
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify source
+        run: |
+          node scripts/deps-check.js
+          node scripts/lint.js
+          node scripts/i18n-check.js
+          node --test
+
+      - name: Build static assets
+        run: node scripts/build.js
 
       - name: Deploy to Deno Deploy
-        env:
-          DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
         run: npx deployctl@latest deploy --project=freebuff-nova --token "$DENO_DEPLOY_TOKEN" server/adapters/deno.entry.js

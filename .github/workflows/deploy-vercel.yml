@@ -1,18 +1,64 @@
-name: Deploy Vercel
+name: deploy-vercel
 
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to deploy
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
-      - name: Deploy to Vercel
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: npx vercel@latest --prod --token "$VERCEL_TOKEN" --yes
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify source
+        run: |
+          node scripts/deps-check.js
+          node scripts/lint.js
+          node scripts/i18n-check.js
+          node --test
+
+      - name: Build static assets
+        run: node scripts/build.js
+
+      - name: Link Vercel project
+        run: |
+          node --input-type=module <<'EOF'
+          import { mkdirSync, writeFileSync } from 'node:fs';
+          mkdirSync('.vercel', { recursive: true });
+          writeFileSync('.vercel/project.json', `${JSON.stringify({
+            orgId: process.env.VERCEL_ORG_ID,
+            projectId: process.env.VERCEL_PROJECT_ID,
+          })}\n`);
+          EOF
+
+      - name: Pull Vercel project settings
+        run: npx vercel@latest pull --yes --environment=production --token "$VERCEL_TOKEN"
+
+      - name: Build Vercel output
+        run: npx vercel@latest build --prod --token "$VERCEL_TOKEN"
+
+      - name: Deploy Vercel output
+        run: npx vercel@latest deploy --prebuilt --prod --token "$VERCEL_TOKEN"
