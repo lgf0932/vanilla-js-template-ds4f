@@ -95,9 +95,9 @@ function registerRoutes() {
 /** 挂载应用壳层（鉴权通过后） */
 function mountApp() {
   const el = document.createElement('app-shell');
-  el.setMenu(menu);
   shell = el;
   root.replaceChildren(el);
+  el.setMenu(menu);
   router.render();
 }
 
