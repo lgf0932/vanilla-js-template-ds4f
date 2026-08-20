@@ -132,4 +132,3 @@ export const preferences = {
 
 export function getPreferences() { return preferences.getState(); }
 export function resetPreferences() { state = normalize(clone(DEFAULTS)); writeLocal(state); applyVisualPreferences(state); notify(); return clone(state); }
-EOF
