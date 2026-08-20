@@ -80,9 +80,10 @@ function listNotes(url) {
 
 function listTags() {
   return {
+    // 与 server/modules/notes/service.js 保持同一响应字段：count。
     items: state.tags.map((tag) => ({
       ...tag,
-      noteCount: state.notes.filter((note) => note.tagIds.includes(tag.id)).length,
+      count: state.notes.filter((note) => note.tagIds.includes(tag.id)).length,
     })).map(clone),
   };
 }
@@ -93,6 +94,10 @@ export async function offlineRequest(path, options = {}) {
   const body = readBody(options.body);
   const url = new URL(path, 'file:///nova-preview/');
   const route = url.pathname;
+
+  // file:// 预览只绕过鉴权；保留公开鉴权接口的响应形状，便于完整前端复用同一 API 契约。
+  if (route === '/api/auth/status' && method === 'GET') return { needsSetup: false };
+  if (route === '/api/auth/login' && method === 'POST') return { token: null, expiresAt: null, duration: body.duration || '8h' };
 
   if (route === '/api/notes' && method === 'GET') return listNotes(url);
   if (route === '/api/notes' && method === 'POST') {
@@ -113,6 +118,7 @@ export async function offlineRequest(path, options = {}) {
   if (noteMatch) {
     const note = state.notes.find((item) => item.id === Number(noteMatch[1]));
     if (!note) return { error: 'NOT_FOUND' };
+    if (method === 'GET') return noteWithTags(note);
     if (method === 'PUT') {
       note.title = String(body.title ?? note.title);
       note.body = String(body.body ?? note.body);
@@ -128,7 +134,10 @@ export async function offlineRequest(path, options = {}) {
 
   if (route === '/api/notes/tags' && method === 'GET') return listTags();
   if (route === '/api/notes/tags' && method === 'POST') {
-    const tag = { id: nextTagId++, name: String(body.name || '未命名标签'), createdAt: timestamp() };
+    const name = String(body.name || '未命名标签').trim();
+    const existing = state.tags.find((tag) => tag.name === name);
+    if (existing) return clone(existing);
+    const tag = { id: nextTagId++, name, createdAt: timestamp() };
     state.tags.push(tag);
     return tag;
   }
@@ -192,7 +201,10 @@ export async function offlineRequest(path, options = {}) {
     state.display = { ...state.display, ...clone(body) };
     return clone(state.display);
   }
-  if (route === '/api/settings/security/change-password' && method === 'POST') return { ok: true };
+  if (route === '/api/settings/security/change-password' && method === 'POST') {
+    // 本地模式无服务端密码存储；表单仍保留与正式设置页一致的成功响应。
+    return { ok: true };
+  }
   if (route === '/api/settings/security/session' && method === 'GET') return { duration: state.sessionDuration };
   if (route === '/api/settings/security/session' && method === 'PUT') {
     state.sessionDuration = body.duration || state.sessionDuration;
@@ -213,4 +225,21 @@ export async function offlineRequest(path, options = {}) {
   }
 
   return {};
+}
+
+/** 测试和重新打开预览时使用：重置当前页面内存数据，不触碰浏览器持久存储。 */
+export function resetOfflineState() {
+  state.notes = [];
+  state.tags = [];
+  state.conversations = [];
+  state.messages.clear();
+  state.profile = {
+    username: '', name: '', gender: '', age: '', email: '', phone: '', address: '',
+  };
+  state.display = { theme: 'system', language: 'zh-CN' };
+  state.sessionDuration = '8h';
+  nextNoteId = 1;
+  nextTagId = 1;
+  nextConversationId = 1;
+  nextMessageId = 1;
 }

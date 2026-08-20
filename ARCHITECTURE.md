@@ -202,7 +202,7 @@
 - **Fetcher**：`app/lib/fetcher.js` 统一封装 `fetch`，自动附加 `X-Auth-Password` 请求头、统一错误处理、401 时触发 `app/core/auth.js` 的重新鉴权流程；`file://` 本地预览改由 `app/lib/offline-api.js` 提供内存数据层。
 - **Event Bus**：`app/lib/event-bus.js` 提供跨模块的"发布/订阅"（仅用于必须跨模块通知的极少数场景，如全局 toast），不能替代模块间数据依赖——模块间原则上不应有数据依赖。
 
-**直接文件预览模式**：根目录 `index.html` 仍是 HTTP 部署入口；当协议为 `file://` 时，入口改加载 `app/file-preview.js` 这一独立零依赖预览脚本，绕开浏览器对本地 ESM 的 CORS 限制。预览提供基础的鉴权占位、仪表盘、笔记、对话和设置交互，数据只存在当前页面内存，不提供服务端密码校验、数据库迁移或持久化能力。HTTP/部署模式仍加载 `app/core/bootstrap.js` 及完整模块系统。
+**直接文件预览模式**：根目录 `index.html` 仍是 HTTP 部署入口；当协议为 `file://` 时，入口改加载 `app/file-preview.js` 这一独立零依赖经典脚本，绕开浏览器对本地 ESM 的 CORS 限制。该入口直接进入完整的仪表盘、笔记/标签、对话和设置功能，只绕过服务端鉴权请求，不创建或发送鉴权令牌；数据层使用与正式 API 契约对应的当前页面内存数据，关闭页面后清空。HTTP/部署模式仍加载 `app/core/bootstrap.js` 及完整模块系统。
 
 ### 3.8 国际化（i18n）
 

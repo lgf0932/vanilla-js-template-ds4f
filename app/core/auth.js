@@ -23,11 +23,13 @@ function readSession() {
 
 class Auth {
   isAuthenticated() {
-    return Boolean(this.getToken());
+    // 直接双击 index.html 时没有服务端鉴权层，完整前端直接进入应用。
+    return isFileRuntime || Boolean(this.getToken());
   }
 
-  /** 当前令牌；超时自动清空并返回 null */
+  /** 当前令牌；超时自动清空并返回 null。file:// 模式明确不产生鉴权令牌。 */
   getToken() {
+    if (isFileRuntime) return null;
     const token = readSession();
     if (!token) return null;
     let expires = null;
@@ -74,6 +76,7 @@ class Auth {
 
   /**
    * 登录（或首次运行设置密码）：POST /api/auth/login。
+   * file:// 模式不显示登录页、不创建 token；此方法仅保留给共享鉴权组件的兼容调用。
    * @param {string} password
    * @param {string} duration SESSION_DURATIONS 中的 id
    * @returns {Promise<{token:string, expiresAt:string|null}>}
