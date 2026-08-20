@@ -4,10 +4,10 @@
  * 空状态全部为"图标 + 引导文案 + 操作按钮"（反留白铁律）。
  */
 
-import { define, attachTemplate, qs, qsa, escapeHtml } from '../../ui/base.js';
-import { t, i18n } from '../../core/i18n.js';
-import { toast, confirmDialog } from '../../ui/index.js';
-import { relativeTime, truncate } from '../../lib/format.js';
+import { define, attachTemplate, qs, qsa, escapeHtml } from '../../../components/ui/base.js';
+import { t, i18n } from '../../../core/i18n.js';
+import { toast, confirmDialog } from '../../../components/ui/index.js';
+import { relativeTime, truncate } from '../../../lib/format.js';
 import { store, loadConversations, openConversation, createConversation, removeConversation, sendMessage } from '../store.js';
 
 class ChatView extends HTMLElement {

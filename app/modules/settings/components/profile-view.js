@@ -4,10 +4,10 @@
  * （shared/constants.js SETTING_KEYS.PROFILE + AES-GCM），前端只处理明文。
  */
 
-import { define, attachTemplate, qs, qsa, escapeHtml } from '../../ui/base.js';
-import { t } from '../../core/i18n.js';
-import { toast } from '../../ui/index.js';
-import { validate, schemas, i18nErrors } from '../../lib/validate.js';
+import { define, attachTemplate, qs, qsa, escapeHtml } from '../../../components/ui/base.js';
+import { t } from '../../../core/i18n.js';
+import { toast } from '../../../components/ui/index.js';
+import { validate, schemas, i18nErrors } from '../../../lib/validate.js';
 import { loadProfile, saveProfile, store } from '../store.js';
 
 const GENDERS = [

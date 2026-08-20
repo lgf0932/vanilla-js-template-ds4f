@@ -3,9 +3,9 @@
  * 只读展示：数据库驱动、迁移版本、业务表计数、加密配置状态（反留白：图标 + 数值）。
  */
 
-import { define, attachTemplate, qs, escapeHtml } from '../../ui/base.js';
-import { t } from '../../core/i18n.js';
-import { formatNumber } from '../../lib/format.js';
+import { define, attachTemplate, qs, escapeHtml } from '../../../components/ui/base.js';
+import { t } from '../../../core/i18n.js';
+import { formatNumber } from '../../../lib/format.js';
 import { loadDatabaseInfo, store } from '../store.js';
 
 class DatabaseView extends HTMLElement {

@@ -3,11 +3,11 @@
  * 主题三态（与 app/core/theme.js 联动，实时生效并持久化） + 语言切换。
  */
 
-import { define, attachTemplate, qs } from '../../ui/base.js';
-import { t, i18n } from '../../core/i18n.js';
-import { theme } from '../../core/theme.js';
-import { toast } from '../../ui/index.js';
-import { LANGUAGE_CODES } from '../../../shared/constants.js';
+import { define, attachTemplate, qs } from '../../../components/ui/base.js';
+import { t, i18n } from '../../../core/i18n.js';
+import { theme } from '../../../core/theme.js';
+import { toast } from '../../../components/ui/index.js';
+import { LANGUAGE_CODES } from '../../../../shared/constants.js';
 import { saveDisplay, loadDisplay } from '../store.js';
 
 class DisplayView extends HTMLElement {

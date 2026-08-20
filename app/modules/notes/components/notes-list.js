@@ -3,10 +3,10 @@
  * 工具栏（搜索/标签筛选/新建）+ 紧凑笔记卡片列表（反留白：--spacing-3、图标、空状态引导）。
  */
 
-import { define, attachTemplate, qs, qsa, escapeHtml } from '../../ui/base.js';
-import { t, i18n } from '../../core/i18n.js';
-import { toast, confirmDialog } from '../../ui/index.js';
-import { relativeTime, plainText, truncate } from '../../lib/format.js';
+import { define, attachTemplate, qs, qsa, escapeHtml } from '../../../components/ui/base.js';
+import { t, i18n } from '../../../core/i18n.js';
+import { toast, confirmDialog } from '../../../components/ui/index.js';
+import { relativeTime, plainText, truncate } from '../../../lib/format.js';
 import { store, loadNotes, loadTags, removeNote, setFilter } from '../store.js';
 import './note-editor.js';
 

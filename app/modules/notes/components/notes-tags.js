@@ -3,9 +3,9 @@
  * 标签管理：新建（回车/按钮）、计数展示、删除（确认弹窗）。
  */
 
-import { define, attachTemplate, qs, qsa, escapeHtml } from '../../ui/base.js';
-import { t } from '../../core/i18n.js';
-import { toast, confirmDialog } from '../../ui/index.js';
+import { define, attachTemplate, qs, qsa, escapeHtml } from '../../../components/ui/base.js';
+import { t } from '../../../core/i18n.js';
+import { toast, confirmDialog } from '../../../components/ui/index.js';
 import { store, loadTags, createTag, removeTag } from '../store.js';
 
 class NotesTagsView extends HTMLElement {

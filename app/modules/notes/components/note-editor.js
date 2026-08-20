@@ -3,10 +3,10 @@
  * 新建/编辑笔记弹窗（ui-dialog）：标题 + 正文 + 标签多选（chips）。
  */
 
-import { define, attachTemplate, qs, qsa, escapeHtml } from '../../ui/base.js';
-import { t } from '../../core/i18n.js';
-import { toast } from '../../ui/index.js';
-import { validate, schemas, i18nErrors } from '../../lib/validate.js';
+import { define, attachTemplate, qs, qsa, escapeHtml } from '../../../components/ui/base.js';
+import { t } from '../../../core/i18n.js';
+import { toast } from '../../../components/ui/index.js';
+import { validate, schemas, i18nErrors } from '../../../lib/validate.js';
 import { store, createNote, updateNote } from '../store.js';
 
 class NoteEditor extends HTMLElement {

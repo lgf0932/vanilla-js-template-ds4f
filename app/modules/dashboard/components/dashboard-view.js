@@ -3,9 +3,9 @@
  * 信息密度遵循"反留白铁律"：卡片内边距 --spacing-3、数值配图标、空状态带引导按钮。
  */
 
-import { define, attachTemplate, qs, qsa, escapeHtml } from '../../ui/base.js';
-import { t, i18n } from '../../core/i18n.js';
-import { formatNumber, relativeTime } from '../../lib/format.js';
+import { define, attachTemplate, qs, qsa, escapeHtml } from '../../../components/ui/base.js';
+import { t, i18n } from '../../../core/i18n.js';
+import { formatNumber, relativeTime } from '../../../lib/format.js';
 import { store, loadSummary } from '../store.js';
 
 class DashboardView extends HTMLElement {

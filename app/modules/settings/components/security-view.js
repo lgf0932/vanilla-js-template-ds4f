@@ -4,11 +4,11 @@
  *  - 默认会话时长：4/8/12/24 小时 + 7/14/30/90 天 + "直到下次浏览器打开"（架构 4.3 节 8+1 布局）
  */
 
-import { define, attachTemplate, qs, qsa, escapeHtml } from '../../ui/base.js';
-import { t } from '../../core/i18n.js';
-import { toast } from '../../ui/index.js';
+import { define, attachTemplate, qs, qsa, escapeHtml } from '../../../components/ui/base.js';
+import { t } from '../../../core/i18n.js';
+import { toast } from '../../../components/ui/index.js';
 import { changePassword, setSessionDuration, loadSessionDefault, store } from '../store.js';
-import { SESSION_DURATIONS } from '../../../shared/constants.js';
+import { SESSION_DURATIONS } from '../../../../shared/constants.js';
 
 class SecurityView extends HTMLElement {
   connectedCallback() {
