@@ -29,7 +29,7 @@ class I18n {
 
   /** 加载壳层文案（common / sidebar / auth 命名空间） */
   async loadShell() {
-    const msgs = await this._fetchPack(`app/locales/${this.lang}.json`);
+    const msgs = await this._fetchPack(`/app/locales/${this.lang}.json`);
     Object.assign(this.messages, msgs || {});
     document.documentElement.lang = this.lang.toLowerCase().replace('_', '-');
     return this.messages;
@@ -43,7 +43,7 @@ class I18n {
   /** 获取语言包（相对导入者目录的路径，由调用方保证） */
   async _fetchPack(url) {
     try {
-      const res = await fetch(url, { headers: { accept: 'application/json' } });
+      const res = await fetch(url, { cache: 'no-store', headers: { accept: 'application/json' } });
       if (!res.ok) return null;
       return await res.json();
     } catch {

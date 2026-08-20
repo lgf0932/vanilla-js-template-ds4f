@@ -4,6 +4,7 @@
 export async function loadLocale(lang) {
   try {
     const res = await fetch(new URL(`./locales/${lang}.json`, import.meta.url), {
+      cache: 'no-store',
       headers: { accept: 'application/json' },
     });
     return res.ok ? await res.json() : null;

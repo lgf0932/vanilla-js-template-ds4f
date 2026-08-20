@@ -41,7 +41,7 @@ async function serveStatic(pathname) {
   return new Response(content, {
     headers: {
       'content-type': MIME[extname(filePath)] || 'application/octet-stream',
-      'cache-control': 'public, max-age=60',
+      'cache-control': process.env.NODE_ENV === 'production' ? 'public, max-age=31536000, immutable' : 'no-store',
     },
   });
 }

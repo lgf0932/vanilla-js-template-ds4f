@@ -2,8 +2,8 @@
  * notes-list 子模块入口：笔记列表视图。
  */
 
-import '../components/notes-list.js';
-import { loadLocale } from '../locale.js';
+import '../../components/notes-list.js';
+import { loadLocale } from '../../locale.js';
 
 export { loadLocale };
 

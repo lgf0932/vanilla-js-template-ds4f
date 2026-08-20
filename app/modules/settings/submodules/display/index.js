@@ -2,8 +2,8 @@
  * settings → display 子模块入口：主题与语言。
  */
 
-import '../components/display-view.js';
-import { loadLocale } from '../locale.js';
+import '../../components/display-view.js';
+import { loadLocale } from '../../locale.js';
 
 export { loadLocale };
 

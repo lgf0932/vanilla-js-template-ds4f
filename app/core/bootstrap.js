@@ -25,6 +25,15 @@ let manifests = [];
 let menu = [];
 let routesRegistered = false;
 
+/**
+ * 壳层菜单文案必须来自已在 bootstrap 阶段加载的 sidebar 命名空间。
+ * i18n.t() 缺 key 时会返回 key 本身，因此不能使用 `t(key) || fallback`。
+ */
+function menuText(key, fallback) {
+  const value = t(key);
+  return value === key ? fallback : value;
+}
+
 /** 由注册表派生侧边栏数据结构 */
 function buildMenu(list) {
   return list
@@ -34,7 +43,7 @@ function buildMenu(list) {
       id: m.id,
       icon: m.icon,
       href: `/${m.id}`,
-      label: t(`${m.i18nNamespace}.title`) || m.id,
+      label: menuText(`sidebar.${m.id}`, m.id),
       submodules: (m.submodules || [])
         .slice()
         .sort((a, b) => a.order - b.order)
@@ -42,7 +51,7 @@ function buildMenu(list) {
           id: s.id,
           icon: s.icon,
           href: `/${m.id}/${s.id}`,
-          label: t(`${m.i18nNamespace}.${s.id}.title`) || s.id,
+          label: menuText(`sidebar.submodules.${m.id}.${s.id}`, s.id),
         })),
     }));
 }
@@ -52,17 +61,17 @@ function makeEntry(manifest, sub, path) {
   return {
     path,
     async mount(viewport) {
-      const ns = manifest.i18nNamespace;
       const mod = sub ? await sub.loadView() : await manifest.loadRoot();
       if (mod && typeof mod.loadLocale === 'function') {
         i18n.merge(await mod.loadLocale(i18n.lang));
       }
 
-      const moduleLabel = t(`${ns}.title`);
+      const moduleLabel = menuText(`sidebar.${manifest.id}`, manifest.id);
+      const subLabel = sub ? menuText(`sidebar.submodules.${manifest.id}.${sub.id}`, sub.id) : '';
       const crumbs = sub
         ? [
             { label: moduleLabel, href: `/${manifest.id}` },
-            { label: t(`${ns}.${sub.id}.title`) },
+            { label: subLabel },
           ]
         : [{ label: moduleLabel }];
       shell?.setBreadcrumb(crumbs);

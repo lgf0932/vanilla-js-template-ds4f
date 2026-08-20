@@ -5,18 +5,24 @@
  */
 
 import { define, attachTemplate, qs, emit, escapeHtml } from '../ui/base.js';
-import { t } from '../../core/i18n.js';
+import { i18n, t } from '../../core/i18n.js';
 
 class AppHeader extends HTMLElement {
   connectedCallback() {
     if (this.shadowRoot) return;
     attachTemplate(this, TEMPLATE);
     this._crumbs = qs(this.shadowRoot, '.crumbs');
+    this._userName = qs(this.shadowRoot, '.user-name');
 
     qs(this.shadowRoot, '.hamburger').addEventListener('click', () => {
       emit(this, 'menu-toggle', {});
     });
+    this._unsubscribeI18n = i18n.onChange(() => this.render());
     this.render();
+  }
+
+  disconnectedCallback() {
+    this._unsubscribeI18n?.();
   }
 
   /** @param {Array<{label:string, href?:string}>} crumbs */
@@ -27,6 +33,7 @@ class AppHeader extends HTMLElement {
 
   render() {
     if (!this._crumbs) return;
+    this._userName.textContent = t('common.role.admin');
     if (!this._breadcrumb?.length) {
       this._crumbs.innerHTML = '';
       return;
@@ -78,7 +85,7 @@ const TEMPLATE = `
   <ui-theme-switch></ui-theme-switch>
   <div class="user" title="${''}">
     <span class="avatar"><ui-icon name="user" size="sm"></ui-icon></span>
-    <span class="user-name">${escapeHtml(t('common.role.admin'))}</span>
+    <span class="user-name"></span>
   </div>
 </header>
 `;

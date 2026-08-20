@@ -40,7 +40,11 @@
     "dashboard": "仪表盘",
     "notes": "笔记",
     "chat": "对话",
-    "settings": "设置"
+    "settings": "设置",
+    "submodules": {
+      "notes": { "list": "全部笔记", "tags": "标签" },
+      "settings": { "profile": "个人资料", "display": "显示", "security": "安全", "database": "数据库" }
+    }
   },
   "dashboard": {
     "title": "仪表盘",

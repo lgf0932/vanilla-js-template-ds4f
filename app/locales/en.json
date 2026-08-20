@@ -40,7 +40,11 @@
     "dashboard": "Dashboard",
     "notes": "Notes",
     "chat": "Chat",
-    "settings": "Settings"
+    "settings": "Settings",
+    "submodules": {
+      "notes": { "list": "All Notes", "tags": "Tags" },
+      "settings": { "profile": "Profile", "display": "Display", "security": "Security", "database": "Database" }
+    }
   },
   "dashboard": {
     "title": "Dashboard",

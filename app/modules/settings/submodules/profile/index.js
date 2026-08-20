@@ -2,8 +2,8 @@
  * settings → profile 子模块入口：用户资料（敏感字段服务端加密）。
  */
 
-import '../components/profile-view.js';
-import { loadLocale } from '../locale.js';
+import '../../components/profile-view.js';
+import { loadLocale } from '../../locale.js';
 
 export { loadLocale };
 
