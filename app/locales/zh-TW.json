@@ -1,0 +1,73 @@
+{
+  "common": {
+    "appName": "Nova 控制台",
+    "save": "儲存",
+    "cancel": "取消",
+    "confirm": "確認",
+    "delete": "刪除",
+    "edit": "編輯",
+    "create": "新增",
+    "close": "關閉",
+    "back": "返回",
+    "loading": "載入中…",
+    "search": "搜尋",
+    "submit": "送出",
+    "retry": "重試",
+    "refresh": "重新整理",
+    "empty": "暫無資料",
+    "error": "出錯了，請稍後重試",
+    "saveSuccess": "儲存成功",
+    "operateSuccess": "操作成功",
+    "copySuccess": "已複製到剪貼簿",
+    "confirmDeleteTitle": "確認刪除",
+    "confirmDeleteBody": "刪除後無法復原，確定要刪除嗎？",
+    "lastUpdated": "更新於 {time}",
+    "notFound": "頁面不存在",
+    "role": { "admin": "管理員" },
+    "theme": { "system": "系統", "light": "淺色", "dark": "深色" },
+    "validation": {
+      "required": "{field} 為必填項",
+      "minLength": "{field} 長度不足",
+      "maxLength": "{field} 超出長度限制",
+      "email": "{field} 格式不正確",
+      "numeric": "{field} 必須是數字",
+      "oneOf": "{field} 取值不合法"
+    }
+  },
+  "sidebar": {
+    "brand": "Nova",
+    "empty": "暫無選單項目",
+    "dashboard": "儀錶板",
+    "notes": "筆記",
+    "chat": "對話",
+    "settings": "設定"
+  },
+  "auth": {
+    "title": "歡迎回來",
+    "subtitle": "輸入管理密碼以繼續",
+    "setupTitle": "設定初始密碼",
+    "setupSubtitle": "首次使用，請設定一個至少 8 位元的管理密碼",
+    "lockedTitle": "工作階段已過期",
+    "lockedSubtitle": "請重新輸入密碼以繼續",
+    "passwordLabel": "管理密碼",
+    "passwordPlaceholder": "請輸入管理密碼",
+    "confirmPassword": "確認密碼",
+    "loginBtn": "進入控制台",
+    "wrongPassword": "密碼錯誤，請重試",
+    "weakPassword": "密碼至少需要 8 個字元",
+    "mismatch": "兩次輸入的密碼不一致",
+    "failed": "登入失敗",
+    "sessionDuration": "工作階段時長",
+    "duration": {
+      "4h": "4 小時",
+      "8h": "8 小時",
+      "12h": "12 小時",
+      "24h": "24 小時",
+      "7d": "7 天",
+      "14d": "14 天",
+      "30d": "30 天",
+      "90d": "90 天",
+      "session": "直到下次瀏覽器開啟"
+    }
+  }
+}

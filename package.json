@@ -1,0 +1,24 @@
+{
+  "name": "freebuff-nova",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Zero-dependency, modular isomorphic web app. Web Components + Nova design tokens, Request->Response backend deployable to Cloudflare / Vercel / Deno / Docker.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node scripts/dev-server.js",
+    "db:migrate": "node scripts/db-migrate.js",
+    "db:reset": "node scripts/db-reset.js",
+    "db:seed": "node scripts/db-seed.js",
+    "lint": "node scripts/lint.js",
+    "i18n:check": "node scripts/i18n-check.js",
+    "test": "node --test",
+    "deps:check": "node scripts/deps-check.js",
+    "build": "node scripts/build.js",
+    "build:budget": "node scripts/bundle-budget-check.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

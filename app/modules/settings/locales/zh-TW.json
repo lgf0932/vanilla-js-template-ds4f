@@ -1,0 +1,56 @@
+{
+  "settings": {
+    "title": "設定",
+    "profile": {
+      "title": "使用者資料",
+      "desc": "以下資訊使用 AES-GCM 加密後儲存，僅本系統可解密回顯。",
+      "username": "使用者名稱",
+      "name": "姓名",
+      "gender": "性別",
+      "genderMale": "男",
+      "genderFemale": "女",
+      "genderOther": "其他",
+      "age": "年齡",
+      "email": "信箱",
+      "phone": "電話",
+      "address": "地址",
+      "save": "儲存資料",
+      "saved": "資料已儲存"
+    },
+    "display": {
+      "title": "顯示與語言",
+      "theme": "主題模式",
+      "themeSystem": "跟隨系統",
+      "themeSystemDesc": "自動跟隨作業系統的深淺色偏好",
+      "themeLight": "淺色",
+      "themeLightDesc": "一律使用淺色主題",
+      "themeDark": "深色",
+      "themeDarkDesc": "一律使用深色主題",
+      "language": "介面語言"
+    },
+    "security": {
+      "title": "安全",
+      "changePassword": "修改管理密碼",
+      "currentPassword": "目前密碼",
+      "newPassword": "新密碼",
+      "confirmPassword": "確認新密碼",
+      "passwordChanged": "密碼已更新，下次登入請使用新密碼",
+      "wrongCurrent": "目前密碼不正確",
+      "changeBtn": "修改密碼",
+      "sessionTitle": "預設工作階段時長",
+      "sessionDesc": "新工作階段的預設有效期，登入頁仍可臨時調整",
+      "sessionSaved": "預設工作階段時長已更新"
+    },
+    "database": {
+      "title": "資料庫",
+      "driver": "目前驅動",
+      "migrations": "遷移版本",
+      "encryption": "欄位加密",
+      "tableNotes": "筆記",
+      "tableTags": "標籤",
+      "tableChats": "對話",
+      "tableMessages": "訊息",
+      "loadError": "資料庫資訊載入失敗"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      # 项目零第三方依赖：无需 npm install，仅安装 just 命令面
+      - name: Install just
+        uses: casey/just@v0.5.4
+
+      - name: deps:check（无第三方依赖）
+        run: just deps:check
+
+      - name: lint
+        run: just lint
+
+      - name: test（node --test）
+        run: just test
+
+      - name: i18n:check（三语言 key 一致）
+        run: just i18n:check
+
+      - name: build + build:budget（体积预算）
+        run: just build:budget

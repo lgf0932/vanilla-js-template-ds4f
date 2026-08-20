@@ -1,0 +1,112 @@
+/* ==========================================================================
+ * utilities.css — 按需手写的最小工具类子集（禁止照搬 Tailwind 全量类库）
+ * 只添加真正用到的类；所有间距/圆角均消费 tokens.css 变量
+ * ========================================================================== */
+
+/* ---- 布局 ---- */
+.flex      { display: flex; }
+.inline-flex { display: inline-flex; }
+.grid      { display: grid; }
+.hidden    { display: none !important; }
+
+.flex-col      { flex-direction: column; }
+.items-center  { align-items: center; }
+.items-start   { align-items: flex-start; }
+.items-end     { align-items: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-center  { justify-content: center; }
+.flex-1      { flex: 1 1 0%; }
+.flex-wrap   { flex-wrap: wrap; }
+.grow       { flex-grow: 1; }
+
+.gap-1 { gap: var(--spacing-1); }
+.gap-2 { gap: var(--spacing-2); }
+.gap-3 { gap: var(--spacing-3); }
+.gap-4 { gap: var(--spacing-4); }
+.gap-5 { gap: var(--spacing-5); }
+.gap-6 { gap: var(--spacing-6); }
+
+/* ---- 间距 ---- */
+.p-1 { padding: var(--spacing-1); }
+.p-2 { padding: var(--spacing-2); }
+.p-3 { padding: var(--spacing-3); }
+.p-4 { padding: var(--spacing-4); }
+.p-5 { padding: var(--spacing-5); }
+.p-6 { padding: var(--spacing-6); }
+
+.px-2 { padding-inline: var(--spacing-2); }
+.px-3 { padding-inline: var(--spacing-3); }
+.px-4 { padding-inline: var(--spacing-4); }
+.py-1 { padding-block: var(--spacing-1); }
+.py-2 { padding-block: var(--spacing-2); }
+.py-3 { padding-block: var(--spacing-3); }
+.py-4 { padding-block: var(--spacing-4); }
+
+.mt-1 { margin-top: var(--spacing-1); }
+.mt-2 { margin-top: var(--spacing-2); }
+.mt-3 { margin-top: var(--spacing-3); }
+.mt-4 { margin-top: var(--spacing-4); }
+.mt-6 { margin-top: var(--spacing-6); }
+.mb-1 { margin-bottom: var(--spacing-1); }
+.mb-2 { margin-bottom: var(--spacing-2); }
+.mb-3 { margin-bottom: var(--spacing-3); }
+.mb-4 { margin-bottom: var(--spacing-4); }
+
+/* ---- 字号 ---- */
+.text-xs  { font-size: var(--text-xs); }
+.text-sm  { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg  { font-size: var(--text-lg); }
+.text-xl  { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+
+.font-mono { font-family: var(--font-mono); }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.text-normal { font-weight: 400; }
+
+/* ---- 文本 ---- */
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+.text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.leading-tight { line-height: 1.25; }
+
+/* ---- 颜色（仅消费 token） ---- */
+.text-muted    { color: hsl(var(--muted-foreground)); }
+.text-primary  { color: hsl(var(--foreground)); }
+.text-destructive { color: hsl(var(--destructive)); }
+.text-success  { color: hsl(var(--success)); }
+.bg-muted  { background-color: hsl(var(--muted)); }
+.bg-card   { background-color: hsl(var(--card)); }
+
+/* ---- 宽度 ---- */
+.w-full  { width: 100%; }
+.max-w-content { max-width: var(--content-max-width); }
+.mx-auto { margin-inline: auto; }
+
+/* ---- 交互 ---- */
+.cursor-pointer { cursor: pointer; }
+.select-none { user-select: none; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- 滚动（仅 <app-main> 允许滚动，见 ARCHITECTURE 3.1） ---- */
+.scroll-region {
+  overflow-y: auto;
+  overflow-x: hidden;
+}

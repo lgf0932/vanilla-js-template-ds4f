@@ -1,0 +1,56 @@
+{
+  "settings": {
+    "title": "设置",
+    "profile": {
+      "title": "用户资料",
+      "desc": "以下信息使用 AES-GCM 加密后存储，仅本系统可解密回显。",
+      "username": "用户名",
+      "name": "姓名",
+      "gender": "性别",
+      "genderMale": "男",
+      "genderFemale": "女",
+      "genderOther": "其他",
+      "age": "年龄",
+      "email": "邮箱",
+      "phone": "电话",
+      "address": "地址",
+      "save": "保存资料",
+      "saved": "资料已保存"
+    },
+    "display": {
+      "title": "显示与语言",
+      "theme": "主题模式",
+      "themeSystem": "跟随系统",
+      "themeSystemDesc": "自动跟随操作系统的深浅色偏好",
+      "themeLight": "浅色",
+      "themeLightDesc": "始终使用浅色主题",
+      "themeDark": "深色",
+      "themeDarkDesc": "始终使用深色主题",
+      "language": "界面语言"
+    },
+    "security": {
+      "title": "安全",
+      "changePassword": "修改管理密码",
+      "currentPassword": "当前密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "passwordChanged": "密码已更新，下次登录请使用新密码",
+      "wrongCurrent": "当前密码不正确",
+      "changeBtn": "修改密码",
+      "sessionTitle": "默认会话时长",
+      "sessionDesc": "新会话的默认有效期，登录页仍可临时调整",
+      "sessionSaved": "默认会话时长已更新"
+    },
+    "database": {
+      "title": "数据库",
+      "driver": "当前驱动",
+      "migrations": "迁移版本",
+      "encryption": "字段加密",
+      "tableNotes": "笔记",
+      "tableTags": "标签",
+      "tableChats": "对话",
+      "tableMessages": "消息",
+      "loadError": "数据库信息加载失败"
+    }
+  }
+}

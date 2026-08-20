@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Nova — 零第三方依赖、模块化、同构部署的应用控制台" />
+  <title>Nova 控制台</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg" />
+  <!-- Zero-Build：原生 ESM + Import Map，不打包；模块按路由懒加载 -->
+  <script type="importmap">
+    {
+      "imports": {}
+    }
+  </script>
+  <link rel="stylesheet" href="/app/styles/tokens.css" />
+  <link rel="stylesheet" href="/app/styles/reset.css" />
+  <link rel="stylesheet" href="/app/styles/utilities.css" />
+  <link rel="stylesheet" href="/app/styles/animations.css" />
+</head>
+<body>
+  <!-- 壳层由 bootstrap 挂载：app-shell（sidebar + header + main）或 auth-gate -->
+  <div id="app-root" aria-live="polite"></div>
+  <noscript>
+    <div style="padding: 2rem; text-align: center; font-family: system-ui, sans-serif">
+      此应用需要启用 JavaScript 才能运行。
+    </div>
+  </noscript>
+  <script type="module" src="/app/core/bootstrap.js"></script>
+</body>
+</html>

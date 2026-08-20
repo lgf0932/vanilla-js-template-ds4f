@@ -1,0 +1,73 @@
+{
+  "common": {
+    "appName": "Nova Console",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "back": "Back",
+    "loading": "Loading…",
+    "search": "Search",
+    "submit": "Submit",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "empty": "Nothing here yet",
+    "error": "Something went wrong, please try again",
+    "saveSuccess": "Saved",
+    "operateSuccess": "Done",
+    "copySuccess": "Copied to clipboard",
+    "confirmDeleteTitle": "Confirm delete",
+    "confirmDeleteBody": "This cannot be undone. Delete anyway?",
+    "lastUpdated": "Updated {time}",
+    "notFound": "Page not found",
+    "role": { "admin": "Administrator" },
+    "theme": { "system": "System", "light": "Light", "dark": "Dark" },
+    "validation": {
+      "required": "{field} is required",
+      "minLength": "{field} is too short",
+      "maxLength": "{field} is too long",
+      "email": "{field} is not a valid email",
+      "numeric": "{field} must be a number",
+      "oneOf": "{field} has an invalid value"
+    }
+  },
+  "sidebar": {
+    "brand": "Nova",
+    "empty": "No menu items",
+    "dashboard": "Dashboard",
+    "notes": "Notes",
+    "chat": "Chat",
+    "settings": "Settings"
+  },
+  "auth": {
+    "title": "Welcome back",
+    "subtitle": "Enter the admin password to continue",
+    "setupTitle": "Set up your password",
+    "setupSubtitle": "First run — choose an admin password of at least 8 characters",
+    "lockedTitle": "Session expired",
+    "lockedSubtitle": "Please enter your password again",
+    "passwordLabel": "Admin password",
+    "passwordPlaceholder": "Enter admin password",
+    "confirmPassword": "Confirm password",
+    "loginBtn": "Continue",
+    "wrongPassword": "Wrong password, try again",
+    "weakPassword": "Password must be at least 8 characters",
+    "mismatch": "Passwords do not match",
+    "failed": "Login failed",
+    "sessionDuration": "Session duration",
+    "duration": {
+      "4h": "4 hours",
+      "8h": "8 hours",
+      "12h": "12 hours",
+      "24h": "24 hours",
+      "7d": "7 days",
+      "14d": "14 days",
+      "30d": "30 days",
+      "90d": "90 days",
+      "session": "Until browser close"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "settings": {
+    "title": "Settings",
+    "profile": {
+      "title": "Profile",
+      "desc": "This data is stored AES-GCM encrypted and only this system can decrypt it.",
+      "username": "Username",
+      "name": "Full name",
+      "gender": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "genderOther": "Other",
+      "age": "Age",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "save": "Save profile",
+      "saved": "Profile saved"
+    },
+    "display": {
+      "title": "Display & language",
+      "theme": "Theme",
+      "themeSystem": "System",
+      "themeSystemDesc": "Follow the OS dark/light preference automatically",
+      "themeLight": "Light",
+      "themeLightDesc": "Always use the light theme",
+      "themeDark": "Dark",
+      "themeDarkDesc": "Always use the dark theme",
+      "language": "Language"
+    },
+    "security": {
+      "title": "Security",
+      "changePassword": "Change admin password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "passwordChanged": "Password updated — use it on your next login",
+      "wrongCurrent": "Current password is incorrect",
+      "changeBtn": "Change password",
+      "sessionTitle": "Default session duration",
+      "sessionDesc": "Default lifetime of new sessions; can be overridden at login",
+      "sessionSaved": "Default session duration updated"
+    },
+    "database": {
+      "title": "Database",
+      "driver": "Active driver",
+      "migrations": "Migration version",
+      "encryption": "Field encryption",
+      "tableNotes": "Notes",
+      "tableTags": "Tags",
+      "tableChats": "Conversations",
+      "tableMessages": "Messages",
+      "loadError": "Failed to load database info"
+    }
+  }
+}
