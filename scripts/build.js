@@ -13,7 +13,7 @@ import { join, resolve } from 'node:path';
 const ROOT = resolve(join(import.meta.dirname, '..'));
 const DIST = join(ROOT, 'dist');
 
-const COPY_ITEMS = ['index.html', 'app', 'public'];
+const COPY_ITEMS = ['index.html', 'app', 'public', 'shared'];
 
 function hash8(content) {
   return createHash('sha256').update(content).digest('hex').slice(0, 8);
