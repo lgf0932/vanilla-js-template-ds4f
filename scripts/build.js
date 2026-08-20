@@ -34,7 +34,7 @@ function minify(source, ext) {
       if (!t) return '';
       if (ext === '.js') {
         if (t.startsWith('//')) return '';
-        if (t.startsWith('/*') || t.startsWith('*/') || t.startsWith('* ')) return '';
+        if (t.startsWith('/*') || t.startsWith('*/') || t === '*' || t.startsWith('* ')) return '';
       }
       if (ext === '.css') {
         if (/^\/\*.*\*\/$/.test(t)) return '';
