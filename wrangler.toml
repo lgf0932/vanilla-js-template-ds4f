@@ -5,10 +5,10 @@ name = "freebuff-nova"
 main = "server/adapters/cloudflare.entry.js"
 compatibility_date = "2025-01-01"
 
-# 静态资源：优先使用 Cloudflare Pages（Functions + 静态托管）；
-# 走 Workers 时可用 Workers Sites（下述 [site] bucket 指向 public/）。
-# [site]
-# bucket = "public"
+# Workers Assets：先运行 node scripts/build.js，再由 ASSETS binding 提供 dist/。
+[assets]
+directory = "./dist"
+binding = "ASSETS"
 
 # D1 数据库绑定（默认绑定名 DB，与 server/db/resolver.js 的探测逻辑一致）
 [[d1_databases]]

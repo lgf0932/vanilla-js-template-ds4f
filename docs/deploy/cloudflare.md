@@ -2,7 +2,7 @@
 
 本项目在 Cloudflare 的后端入口是 `server/adapters/cloudflare.entry.js`，D1 绑定名固定为 `DB`，数据库名与 `wrangler.toml` 中的 `database_name` 保持一致（当前为 `freebuff-nova`）。前端生产静态文件由 `node scripts/build.js` 生成到 `dist/`。
 
-> **先确认静态资源部署方式**：当前入口文件只把 `/api/*` 转给后端，其它路径返回 404；`wrangler.toml` 目前没有启用 Workers Assets。若使用单个 Worker 域名同时承载前端和 API，需要在 Cloudflare 中配置 Pages 静态资源/Functions，或先补充 Assets 转发配置。不要在未配置静态资源的情况下直接把它当成完整的单 Worker SPA 发布。
+> **静态资源已由 Workers Assets 提供**：`wrangler.toml` 的 `ASSETS` binding 指向构建产物 `dist/`，入口会把静态文件交给 Assets，并将未命中的前端路由回退到 `index.html`。每次部署前必须先运行 `node scripts/build.js`。
 
 ## 1. 部署前准备
 
@@ -31,6 +31,10 @@ name = "freebuff-nova"
 main = "server/adapters/cloudflare.entry.js"
 compatibility_date = "2025-01-01"
 
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "freebuff-nova"
@@ -40,10 +44,10 @@ migrations_dir = "server/db/migrations"
 
 迁移文件实际位于 `server/db/migrations/`，当前仓库的 `wrangler.toml` 已通过 `migrations_dir` 注册该目录。执行 Wrangler migration 前仍需把 `database_id` 替换为真实的 D1 数据库 ID。
 
-另外，Cloudflare Workers/Pages 对静态文件的托管方式不同：
+Cloudflare Workers 与 Pages 的静态托管入口不同：
 
-- **Pages Git 集成**：构建输出目录设置为 `dist`，并确保 `/api/*` 由 Pages Functions/Worker 入口转发到 `server/adapters/cloudflare.entry.js`；
-- **独立 Workers**：需要启用 Assets 并让非 `/api/*` 请求转发给 Assets。仅设置 `main` 而不配置 Assets 时，前端路径会返回 404。
+- **独立 Workers（当前 `wrangler deploy`）**：使用 `ASSETS` binding 提供 `dist/`，入口负责 `/api/*` 和 SPA fallback；
+- **Pages Git 集成**：也可以把构建输出目录设置为 `dist`，但要确保 `/api/*` 由 Pages Functions/Worker 入口转发到 `server/adapters/cloudflare.entry.js`，不要同时维护第二套 API 入口。
 
 ## 3. Cloudflare Dashboard 导入 Git 仓库
 
@@ -123,10 +127,12 @@ Token 只通过 GitHub Actions Secret 注入，不要写入 workflow、`wrangler
 
 ## 7. 验证
 
-项目当前没有 `/api/health` 路由，请使用公开的鉴权状态接口：
+项目当前没有 `/api/health` 路由，请使用公开的鉴权状态接口，并确认根路径和一个嵌套路由都能返回前端：
 
 ```bash
 curl -i https://<your-domain>/api/auth/status
+curl -i https://<your-domain>/
+curl -i https://<your-domain>/notes/list
 ```
 
 应返回 HTTP `200` 和类似 JSON：
@@ -157,6 +163,6 @@ curl -i https://<your-domain>/api/auth/status
 - `D1 binding not available`：检查绑定名称是否严格为 `DB`，以及部署入口是否收到 D1 环境。
 - `D1 database not found`：检查 `database_id`、数据库名和 Account ID。
 - `ENCRYPTION_KEY is required`：在 Secret 中配置，不能只写在 `[vars]` 或提交到仓库。
-- 前端路径 404：检查 Pages 静态输出是否为 `dist`，以及 Worker/Pages 是否配置了非 `/api/*` 的静态资源处理。
+- 根路径或 `/notes/list` 返回 `Not found`：先运行 `node scripts/build.js`，确认 `wrangler.toml` 的 `ASSETS` binding 指向 `./dist`，再重新部署。
 - Wrangler 找不到迁移：确认 `migrations_dir = "server/db/migrations"` 已配置，并使用与当前 Wrangler 版本匹配的 migration 命令。
 - `node:*` 模块兼容性错误：当前 resolver、迁移 runner 和 SQLite 适配器不会静态导入 Node builtins；确认部署使用包含该修复的 ref，并保持 Cloudflare 使用 D1。不要把 `DB_DRIVER=sqlite` 用于 Workers。

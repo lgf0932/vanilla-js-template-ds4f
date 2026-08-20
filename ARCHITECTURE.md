@@ -350,7 +350,7 @@ export async function handleRequest(request, env) { /* server/app.js 组装的�
 
 | 平台 | 入口文件 | Fetch 语义 | 默认数据库 | 静态资源 |
 |---|---|---|---|---|
-| Cloudflare Pages/Workers | `server/adapters/cloudflare.entry.js` | `export default { fetch(req, env, ctx) }` | D1（可切 Turso） | Pages 内置静态托管 |
+| Cloudflare Pages/Workers | `server/adapters/cloudflare.entry.js` | `export default { fetch(req, env, ctx) }` | D1（可切 Turso） | Pages 静态托管 / Workers Assets（`dist/`） |
 | Vercel | `server/adapters/vercel.entry.js` | Edge Function `export default function(req)` | Turso | `public/` 静态托管 |
 | Deno Deploy | `server/adapters/deno.entry.js` | `Deno.serve(handler)` | Turso | Deno 内置静态文件服务 |
 | Docker/VPS | `server/adapters/node.entry.js` | `node:http` → 标准 Request/Response | Turso（可显式切本地 SQLite） | 容器内置极简静态中间件 |

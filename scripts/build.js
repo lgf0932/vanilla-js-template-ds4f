@@ -63,6 +63,11 @@ async function main() {
     cpSync(join(ROOT, item), join(DIST, item), { recursive: true });
   }
 
+  // 测试文件只属于源码校验，不应进入生产静态产物（否则 node --test 会重复扫描 dist）。
+  for (const file of walk(DIST)) {
+    if (file.endsWith('.test.js')) rmSync(file);
+  }
+
   // 压缩 JS/CSS（保留文件路径不变 → 动态 import 相对路径继续有效）
   for (const file of walk(DIST)) {
     if (!/\.(js|css)$/.test(file)) continue;
