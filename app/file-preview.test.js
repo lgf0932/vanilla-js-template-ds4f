@@ -12,6 +12,8 @@ test('file preview: is a classic standalone entry with no network auth request',
   assert.match(source, /state\.notes/);
   assert.match(source, /state\.tags/);
   assert.match(source, /state\.conversations/);
+  assert.match(source, /indexedDB/);
+  assert.match(source, /void startPreview\(\)/);
 });
 
 test('file preview: exposes the same module routes and settings surface', () => {

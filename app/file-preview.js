@@ -3,7 +3,7 @@
  * 直接双击 index.html 时使用的完整本地预览入口。
  *
  * 浏览器对 file:// 下的跨文件 ESM 有 CORS 限制，因此这里使用一个零依赖
- * 的经典脚本入口；它复刻正式模块的功能面，只把后端 API 换成当前页面内存数据，
+ * 的经典脚本入口；它复刻正式模块的功能面，只把后端 API 换成浏览器 IndexedDB，
  * 并且不创建或发送 X-Auth-Password 鉴权令牌。
  */
 
@@ -40,15 +40,15 @@
       emptyChats: '还没有对话', emptyChatsHint: '点击按钮创建第一个对话', emptyThread: '这条对话还是空的', emptyThreadHint: '在下方输入框开始记录',
       composer: '输入消息，Enter 发送，Shift+Enter 换行…', send: '发送', role: '角色', roleUser: '用户', roleAssistant: '助手', rename: '重命名',
       deleteChatConfirm: '删除对话会一并删除其中的所有消息，确定删除吗？', deleteTagConfirm: '删除标签会解除它与所有笔记的关联，确定删除吗？',
-      profileTitle: '用户资料', profileDesc: '本地预览直接在当前页面内存中处理资料。',
+      profileTitle: '用户资料', profileDesc: '本地预览将资料保存在当前浏览器的 IndexedDB 中。',
       username: '用户名', name: '姓名', gender: '性别', genderMale: '男', genderFemale: '女', genderOther: '其他', age: '年龄', email: '邮箱', phone: '电话', address: '地址',
       displayTitle: '显示与语言', theme: '主题模式', system: '跟随系统', light: '浅色', dark: '深色', language: '界面语言', simplified: '简体中文', traditional: '繁體中文', english: 'English',
       securityTitle: '修改管理密码', currentPassword: '当前密码', newPassword: '新密码', confirmPassword: '确认新密码', changePassword: '修改密码',
       sessionTitle: '默认会话时长', sessionDesc: '本地模式不做服务端会话校验，但保留与正式设置页一致的选项。',
       databaseTitle: '数据库状态', driver: '当前驱动', migrations: '迁移版本', encryption: '字段加密', tableNotes: '笔记', tableTags: '标签', tableChats: '对话', tableMessages: '消息',
-      memory: 'offline-preview', enabled: '已启用', disabled: '未启用', persistence: '数据范围', memoryOnly: '当前页面内存',
+      memory: 'offline-preview', indexedDb: 'IndexedDB', persistent: '当前浏览器 IndexedDB', enabled: '已启用', disabled: '未启用', persistence: '数据范围', memoryOnly: '当前页面内存（浏览器未提供 IndexedDB）',
       saved: '保存成功', deleted: '删除成功', created: '创建成功', updated: '更新成功', required: '标题不能为空', invalidEmail: '邮箱格式不正确',
-      error: '操作失败，请重试', confirmDelete: '确认删除', noContent: '暂无内容', localNotice: '本地模式只绕过服务端鉴权，其余模块操作保持可用；刷新或关闭页面后内存数据会清空。',
+      error: '操作失败，请重试', confirmDelete: '确认删除', noContent: '暂无内容', localNotice: '本地模式只绕过服务端鉴权，其余模块操作保持可用；数据保存到当前浏览器 IndexedDB。',
     },
     en: {
       brand: 'Nova', version: 'v0.1', localMode: 'Local preview · Auth bypassed', admin: 'Administrator',
@@ -65,15 +65,15 @@
       emptyChats: 'No conversations yet', emptyChatsHint: 'Create the first conversation above', emptyThread: 'This conversation is empty', emptyThreadHint: 'Start typing in the composer below',
       composer: 'Type a message — Enter to send, Shift+Enter for a new line…', send: 'Send', role: 'Role', roleUser: 'User', roleAssistant: 'Assistant', rename: 'Rename',
       deleteChatConfirm: 'Deleting a conversation removes all its messages. Delete anyway?', deleteTagConfirm: 'Deleting a tag unlinks it from all notes. Delete anyway?',
-      profileTitle: 'Profile', profileDesc: 'The local preview handles profile data in this page memory.',
+      profileTitle: 'Profile', profileDesc: 'The local preview stores profile data in this browser IndexedDB.',
       username: 'Username', name: 'Full name', gender: 'Gender', genderMale: 'Male', genderFemale: 'Female', genderOther: 'Other', age: 'Age', email: 'Email', phone: 'Phone', address: 'Address',
       displayTitle: 'Display & language', theme: 'Theme', system: 'System', light: 'Light', dark: 'Dark', language: 'Language', simplified: '简体中文', traditional: '繁體中文', english: 'English',
       securityTitle: 'Change admin password', currentPassword: 'Current password', newPassword: 'New password', confirmPassword: 'Confirm new password', changePassword: 'Change password',
       sessionTitle: 'Default session duration', sessionDesc: 'Local mode skips server session checks but keeps the same settings as the full app.',
       databaseTitle: 'Database status', driver: 'Active driver', migrations: 'Migration version', encryption: 'Field encryption', tableNotes: 'Notes', tableTags: 'Tags', tableChats: 'Conversations', tableMessages: 'Messages',
-      memory: 'offline-preview', enabled: 'Enabled', disabled: 'Disabled', persistence: 'Data scope', memoryOnly: 'Current page memory',
+      memory: 'offline-preview', indexedDb: 'IndexedDB', persistent: 'This browser IndexedDB', enabled: 'Enabled', disabled: 'Disabled', persistence: 'Data scope', memoryOnly: 'Current page memory (IndexedDB unavailable)',
       saved: 'Saved', deleted: 'Deleted', created: 'Created', updated: 'Updated', required: 'Title is required', invalidEmail: 'Invalid email address',
-      error: 'Operation failed, please try again', confirmDelete: 'Confirm delete', noContent: 'Nothing here yet', localNotice: 'Local mode only bypasses server auth; all module operations remain available. Memory data clears when this page closes.',
+      error: 'Operation failed, please try again', confirmDelete: 'Confirm delete', noContent: 'Nothing here yet', localNotice: 'Local mode only bypasses server auth; all module operations remain available. Data is saved in this browser IndexedDB.',
     },
     'zh-TW': {
       brand: 'Nova', version: 'v0.1', localMode: '本機預覽 · 略過鑑權', admin: '管理員',
@@ -90,15 +90,15 @@
       emptyChats: '還沒有對話', emptyChatsHint: '點擊按鈕建立第一個對話', emptyThread: '這則對話還是空的', emptyThreadHint: '在下方輸入框開始記錄',
       composer: '輸入訊息，Enter 傳送，Shift+Enter 換行…', send: '傳送', role: '角色', roleUser: '使用者', roleAssistant: '助手', rename: '重新命名',
       deleteChatConfirm: '刪除對話將一併刪除其中的所有訊息，確定刪除嗎？', deleteTagConfirm: '刪除標籤會解除它與所有筆記的關聯，確定刪除嗎？',
-      profileTitle: '使用者資料', profileDesc: '本機預覽直接在目前頁面的記憶體中處理資料。',
+      profileTitle: '使用者資料', profileDesc: '本機預覽會將資料保存在目前瀏覽器的 IndexedDB 中。',
       username: '使用者名稱', name: '姓名', gender: '性別', genderMale: '男', genderFemale: '女', genderOther: '其他', age: '年齡', email: '信箱', phone: '電話', address: '地址',
       displayTitle: '顯示與語言', theme: '主題模式', system: '跟隨系統', light: '淺色', dark: '深色', language: '介面語言', simplified: '简体中文', traditional: '繁體中文', english: 'English',
       securityTitle: '修改管理密碼', currentPassword: '目前密碼', newPassword: '新密碼', confirmPassword: '確認新密碼', changePassword: '修改密碼',
       sessionTitle: '預設工作階段時長', sessionDesc: '本機模式不進行伺服器工作階段驗證，但保留與正式設定頁一致的選項。',
       databaseTitle: '資料庫狀態', driver: '目前驅動', migrations: '遷移版本', encryption: '欄位加密', tableNotes: '筆記', tableTags: '標籤', tableChats: '對話', tableMessages: '訊息',
-      memory: 'offline-preview', enabled: '已啟用', disabled: '未啟用', persistence: '資料範圍', memoryOnly: '目前頁面記憶體',
+      memory: 'offline-preview', indexedDb: 'IndexedDB', persistent: '目前瀏覽器 IndexedDB', enabled: '已啟用', disabled: '未啟用', persistence: '資料範圍', memoryOnly: '目前頁面記憶體（瀏覽器未提供 IndexedDB）',
       saved: '儲存成功', deleted: '刪除成功', created: '建立成功', updated: '更新成功', required: '標題不能為空', invalidEmail: '信箱格式不正確',
-      error: '操作失敗，請重試', confirmDelete: '確認刪除', noContent: '暫無內容', localNotice: '本機模式只略過伺服器鑑權，其餘模組操作維持可用；重新整理或關閉頁面後記憶體資料會清除。',
+      error: '操作失敗，請重試', confirmDelete: '確認刪除', noContent: '暫無內容', localNotice: '本機模式只略過伺服器鑑權，其餘模組操作維持可用；資料會保存到目前瀏覽器 IndexedDB。',
     },
   };
 
@@ -111,12 +111,219 @@
     messages: new Map(),
     profile: Object.fromEntries(PROFILE_FIELDS.map((field) => [field, ''])),
     sessionDuration: '8h',
+    storage: 'memory',
     activeConversationId: null,
     noteSearch: '',
     noteTag: '',
     noteVisible: 20,
     previewPassword: '',
   };
+
+  const PREVIEW_DB_NAME = 'nova-offline-preview';
+  const PREVIEW_DB_VERSION = 2;
+  const PREVIEW_STORE_NAME = 'state';
+  const PREVIEW_META_STORE_NAME = 'meta';
+  const PREVIEW_SNAPSHOT_KEY = 'current';
+  const PREVIEW_PROFILE_KEY = 'profile-key';
+  let previewDatabasePromise = null;
+  let previewPersistenceReady = false;
+  let previewSaveQueue = Promise.resolve();
+
+  function openPreviewDatabase() {
+    if (!globalThis.indexedDB || typeof globalThis.indexedDB.open !== 'function') return Promise.resolve(null);
+    if (previewDatabasePromise) return previewDatabasePromise;
+    try {
+      previewDatabasePromise = new Promise((resolve, reject) => {
+        const request = globalThis.indexedDB.open(PREVIEW_DB_NAME, PREVIEW_DB_VERSION);
+        request.onupgradeneeded = () => {
+          if (!request.result.objectStoreNames.contains(PREVIEW_STORE_NAME)) request.result.createObjectStore(PREVIEW_STORE_NAME);
+          if (!request.result.objectStoreNames.contains(PREVIEW_META_STORE_NAME)) request.result.createObjectStore(PREVIEW_META_STORE_NAME);
+        };
+        request.onsuccess = () => {
+          const database = request.result;
+          database.onversionchange = () => database.close();
+          resolve(database);
+        };
+        request.onerror = () => reject(request.error || new Error('indexeddb.open.failed'));
+        request.onblocked = () => reject(new Error('indexeddb.open.blocked'));
+      }).catch(() => {
+        previewDatabasePromise = null;
+        return null;
+      });
+    } catch {
+      previewDatabasePromise = Promise.resolve(null);
+    }
+    return previewDatabasePromise;
+  }
+
+  function readPreviewSnapshot(database) {
+    return new Promise((resolve, reject) => {
+      let value;
+      const transaction = database.transaction(PREVIEW_STORE_NAME, 'readonly');
+      const request = transaction.objectStore(PREVIEW_STORE_NAME).get(PREVIEW_SNAPSHOT_KEY);
+      request.onsuccess = () => { value = request.result; };
+      transaction.oncomplete = () => resolve(value || null);
+      transaction.onerror = () => reject(transaction.error || new Error('indexeddb.read.failed'));
+      transaction.onabort = () => reject(transaction.error || new Error('indexeddb.read.aborted'));
+    });
+  }
+
+  function writePreviewSnapshot(database, snapshot) {
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(PREVIEW_STORE_NAME, 'readwrite');
+      transaction.objectStore(PREVIEW_STORE_NAME).put(snapshot, PREVIEW_SNAPSHOT_KEY);
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error || new Error('indexeddb.write.failed'));
+      transaction.onabort = () => reject(transaction.error || new Error('indexeddb.write.aborted'));
+    });
+  }
+
+  function readPreviewMeta(database, key) {
+    return new Promise((resolve, reject) => {
+      let value;
+      const transaction = database.transaction(PREVIEW_META_STORE_NAME, 'readonly');
+      const request = transaction.objectStore(PREVIEW_META_STORE_NAME).get(key);
+      request.onsuccess = () => { value = request.result; };
+      transaction.oncomplete = () => resolve(value);
+      transaction.onerror = () => reject(transaction.error || new Error('indexeddb.meta.read.failed'));
+      transaction.onabort = () => reject(transaction.error || new Error('indexeddb.meta.read.aborted'));
+    });
+  }
+
+  function writePreviewMeta(database, key, value) {
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(PREVIEW_META_STORE_NAME, 'readwrite');
+      transaction.objectStore(PREVIEW_META_STORE_NAME).put(value, key);
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error || new Error('indexeddb.meta.write.failed'));
+      transaction.onabort = () => reject(transaction.error || new Error('indexeddb.meta.write.aborted'));
+    });
+  }
+
+  function hasPreviewCrypto() {
+    return Boolean(globalThis.crypto?.subtle && globalThis.crypto?.getRandomValues);
+  }
+
+  async function getPreviewProfileKey(database) {
+    if (!hasPreviewCrypto()) return null;
+    try {
+      const existing = await readPreviewMeta(database, PREVIEW_PROFILE_KEY);
+      if (existing) return existing;
+      const key = await globalThis.crypto.subtle.generateKey(
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt'],
+      );
+      await writePreviewMeta(database, PREVIEW_PROFILE_KEY, key);
+      return key;
+    } catch {
+      return null;
+    }
+  }
+
+  async function encryptPreviewProfile(database, profile) {
+    if (!Object.values(profile).some(Boolean)) return null;
+    const key = await getPreviewProfileKey(database);
+    if (!key) return null;
+    try {
+      const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
+      const encoded = new TextEncoder().encode(JSON.stringify(profile));
+      const ciphertext = await globalThis.crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoded);
+      return { iv: [...iv], ciphertext: [...new Uint8Array(ciphertext)] };
+    } catch {
+      return null;
+    }
+  }
+
+  async function decryptPreviewProfile(database, payload) {
+    if (!payload || !Array.isArray(payload.iv) || !Array.isArray(payload.ciphertext)) return null;
+    const key = await getPreviewProfileKey(database);
+    if (!key) return null;
+    try {
+      const plaintext = await globalThis.crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: new Uint8Array(payload.iv) },
+        key,
+        new Uint8Array(payload.ciphertext),
+      );
+      return JSON.parse(new TextDecoder().decode(plaintext));
+    } catch {
+      return null;
+    }
+  }
+
+  async function serializePreviewState(database) {
+    const profileCiphertext = await encryptPreviewProfile(database, state.profile);
+    return {
+      notes: state.notes,
+      tags: state.tags,
+      conversations: state.conversations,
+      messages: [...state.messages.entries()],
+      ...(profileCiphertext ? { profileCiphertext } : {}),
+      display: { theme: state.theme, language: state.language },
+      sessionDuration: state.sessionDuration,
+      activeConversationId: state.activeConversationId,
+    };
+  }
+
+  async function applyPreviewSnapshot(snapshot, database) {
+    if (Array.isArray(snapshot.notes)) state.notes = snapshot.notes;
+    if (Array.isArray(snapshot.tags)) state.tags = snapshot.tags;
+    if (Array.isArray(snapshot.conversations)) state.conversations = snapshot.conversations;
+    if (Array.isArray(snapshot.messages)) {
+      state.messages = new Map(snapshot.messages.map(([id, items]) => [Number(id), Array.isArray(items) ? items : []]));
+    }
+    const decryptedProfile = await decryptPreviewProfile(database, snapshot.profileCiphertext);
+    if (decryptedProfile || (snapshot.profile && typeof snapshot.profile === 'object')) {
+      state.profile = { ...state.profile, ...(decryptedProfile || snapshot.profile) };
+    }
+    if (snapshot.display && typeof snapshot.display === 'object') {
+      if (['system', 'light', 'dark'].includes(snapshot.display.theme)) state.theme = snapshot.display.theme;
+      if (['zh-CN', 'zh-TW', 'en'].includes(snapshot.display.language)) state.language = snapshot.display.language;
+    }
+    if (snapshot.sessionDuration) state.sessionDuration = snapshot.sessionDuration;
+    if (snapshot.activeConversationId !== undefined) state.activeConversationId = snapshot.activeConversationId;
+  }
+
+  async function hydratePreviewState() {
+    const database = await openPreviewDatabase();
+    if (!database) {
+      state.storage = 'memory';
+      return;
+    }
+    try {
+      const snapshot = await readPreviewSnapshot(database);
+      if (snapshot) await applyPreviewSnapshot(snapshot, database);
+      state.storage = 'indexeddb';
+    } catch {
+      state.storage = 'memory';
+    }
+  }
+
+  function persistPreviewState() {
+    if (!previewPersistenceReady || state.storage !== 'indexeddb') return;
+    const task = previewSaveQueue.then(async () => {
+      const database = await openPreviewDatabase();
+      if (!database) throw new Error('indexeddb.unavailable');
+      await writePreviewSnapshot(database, await serializePreviewState(database));
+    }).catch(() => {
+      state.storage = 'memory';
+    });
+    previewSaveQueue = task;
+  }
+
+  async function startPreview() {
+    try {
+      await hydratePreviewState();
+    } catch {
+      state.storage = 'memory';
+    } finally {
+      previewPersistenceReady = true;
+      render();
+    }
+  }
+
+  // 等待首次 IndexedDB hydration，避免空快照覆盖已有本地数据。
+  void startPreview();
 
   function readStorage(key) {
     try {
@@ -448,11 +655,13 @@
   }
 
   function renderDatabase() {
+    const storageLabel = state.storage === 'indexeddb' ? t('indexedDb') : t('memory');
+    const persistenceLabel = state.storage === 'indexeddb' ? t('persistent') : t('memoryOnly');
     const values = [
-      ['database', t('driver'), 'offline-preview'], ['shield', t('migrations'), '0'], ['key', t('encryption'), t('disabled')],
+      ['database', t('driver'), storageLabel], ['shield', t('migrations'), '0'], ['key', t('encryption'), t('disabled')],
       ['note', t('tableNotes'), state.notes.length], ['tag', t('tableTags'), state.tags.length], ['chat', t('tableChats'), state.conversations.length], ['send', t('tableMessages'), [...state.messages.values()].reduce((sum, items) => sum + items.length, 0)],
     ];
-    return `<section class="settings-page page"><h1>${esc(t('database'))}</h1>${settingsTabs('settings/database')}<section class="stat-grid database-grid">${values.map(([symbol, label, value]) => `<div class="stat-card database-stat">${icon(symbol)}<span><strong>${esc(typeof value === 'number' ? formatNumber(value) : value)}</strong><small>${esc(label)}</small></span></div>`).join('')}</section><section class="card info-row"><span>${esc(t('persistence'))}</span><strong>${esc(t('memoryOnly'))}</strong></section></section>`;
+    return `<section class="settings-page page"><h1>${esc(t('database'))}</h1>${settingsTabs('settings/database')}<section class="stat-grid database-grid">${values.map(([symbol, label, value]) => `<div class="stat-card database-stat">${icon(symbol)}<span><strong>${esc(typeof value === 'number' ? formatNumber(value) : value)}</strong><small>${esc(label)}</small></span></div>`).join('')}</section><section class="card info-row"><span>${esc(t('persistence'))}</span><strong>${esc(persistenceLabel)}</strong></section></section>`;
   }
 
   function renderSettings(path) {
@@ -471,6 +680,9 @@
   }
 
   function render() {
+    if (!previewPersistenceReady) return;
+    // Persist after each local state change once IndexedDB hydration is ready.
+    persistPreviewState();
     applyTheme();
     const path = currentPath();
     if (path === 'notes') return nav('notes/list');

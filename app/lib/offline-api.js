@@ -1,33 +1,47 @@
 /**
  * app/lib/offline-api.js
- * 直接双击 index.html 时使用的内存预览数据层。
- * 仅用于 file:// 预览，不写入数据库、不持久化密码，HTTP 模式仍走真实 API。
+ * 直接双击 index.html 时使用的本地数据层。
+ *
+ * file:// 模式不能访问 Node SQLite，因此使用浏览器原生 IndexedDB 保存 API 快照；
+ * 如果浏览器禁用了 IndexedDB，则自动降级为当前页面内存数据。HTTP 模式仍走真实 API。
  */
 
-const state = {
-  notes: [],
-  tags: [],
-  conversations: [],
-  messages: new Map(),
-  profile: {
-    username: '',
-    name: '',
-    gender: '',
-    age: '',
-    email: '',
-    phone: '',
-    address: '',
-  },
-  display: { theme: 'system', language: 'zh-CN' },
-  sessionDuration: '8h',
-};
+const DB_NAME = 'nova-offline-preview';
+const DB_VERSION = 2;
+const STORE_NAME = 'state';
+const META_STORE_NAME = 'meta';
+const SNAPSHOT_KEY = 'current';
+const PROFILE_KEY = 'profile-key';
 
-let nextNoteId = 1;
-let nextTagId = 1;
-let nextConversationId = 1;
-let nextMessageId = 1;
+function createInitialState() {
+  return {
+    notes: [],
+    tags: [],
+    conversations: [],
+    messages: new Map(),
+    profile: {
+      username: '',
+      name: '',
+      gender: '',
+      age: '',
+      email: '',
+      phone: '',
+      address: '',
+    },
+    display: { theme: 'system', language: 'zh-CN' },
+    sessionDuration: '8h',
+    counters: { note: 1, tag: 1, conversation: 1, message: 1 },
+  };
+}
+
+let state = createInitialState();
+let storageMode = 'memory';
+let hydrated = false;
+let databasePromise = null;
+let operationQueue = Promise.resolve();
 
 function clone(value) {
+  if (value === undefined) return value;
   return JSON.parse(JSON.stringify(value));
 }
 
@@ -44,6 +58,223 @@ function readBody(body) {
 
 function timestamp() {
   return new Date().toISOString();
+}
+
+function hasIndexedDb() {
+  return Boolean(globalThis.indexedDB && typeof globalThis.indexedDB.open === 'function');
+}
+
+function openDatabase() {
+  if (!hasIndexedDb()) return Promise.resolve(null);
+  if (databasePromise) return databasePromise;
+
+  try {
+    databasePromise = new Promise((resolve, reject) => {
+      const request = globalThis.indexedDB.open(DB_NAME, DB_VERSION);
+      request.onupgradeneeded = () => {
+        if (!request.result.objectStoreNames.contains(STORE_NAME)) {
+          request.result.createObjectStore(STORE_NAME);
+        }
+        if (!request.result.objectStoreNames.contains(META_STORE_NAME)) {
+          request.result.createObjectStore(META_STORE_NAME);
+        }
+      };
+      request.onsuccess = () => {
+        const database = request.result;
+        database.onversionchange = () => database.close();
+        resolve(database);
+      };
+      request.onerror = () => reject(request.error || new Error('indexeddb.open.failed'));
+      request.onblocked = () => reject(new Error('indexeddb.open.blocked'));
+    }).catch(() => {
+      databasePromise = null;
+      return null;
+    });
+  } catch {
+    databasePromise = Promise.resolve(null);
+  }
+  return databasePromise;
+}
+
+function readSnapshot(database) {
+  return new Promise((resolve, reject) => {
+    let value;
+    const transaction = database.transaction(STORE_NAME, 'readonly');
+    const request = transaction.objectStore(STORE_NAME).get(SNAPSHOT_KEY);
+    request.onsuccess = () => { value = request.result; };
+    transaction.oncomplete = () => resolve(value || null);
+    transaction.onerror = () => reject(transaction.error || new Error('indexeddb.read.failed'));
+    transaction.onabort = () => reject(transaction.error || new Error('indexeddb.read.aborted'));
+  });
+}
+
+function writeSnapshot(database, snapshot) {
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(STORE_NAME, 'readwrite');
+    transaction.objectStore(STORE_NAME).put(snapshot, SNAPSHOT_KEY);
+    transaction.oncomplete = resolve;
+    transaction.onerror = () => reject(transaction.error || new Error('indexeddb.write.failed'));
+    transaction.onabort = () => reject(transaction.error || new Error('indexeddb.write.aborted'));
+  });
+}
+
+function readMeta(database, key) {
+  return new Promise((resolve, reject) => {
+    let value;
+    const transaction = database.transaction(META_STORE_NAME, 'readonly');
+    const request = transaction.objectStore(META_STORE_NAME).get(key);
+    request.onsuccess = () => { value = request.result; };
+    transaction.oncomplete = () => resolve(value);
+    transaction.onerror = () => reject(transaction.error || new Error('indexeddb.meta.read.failed'));
+    transaction.onabort = () => reject(transaction.error || new Error('indexeddb.meta.read.aborted'));
+  });
+}
+
+function writeMeta(database, key, value) {
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(META_STORE_NAME, 'readwrite');
+    transaction.objectStore(META_STORE_NAME).put(value, key);
+    transaction.oncomplete = resolve;
+    transaction.onerror = () => reject(transaction.error || new Error('indexeddb.meta.write.failed'));
+    transaction.onabort = () => reject(transaction.error || new Error('indexeddb.meta.write.aborted'));
+  });
+}
+
+function hasBrowserCrypto() {
+  return Boolean(globalThis.crypto?.subtle && globalThis.crypto?.getRandomValues);
+}
+
+async function getProfileKey(database) {
+  if (!hasBrowserCrypto()) return null;
+  try {
+    const existing = await readMeta(database, PROFILE_KEY);
+    if (existing) return existing;
+    const key = await globalThis.crypto.subtle.generateKey(
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt'],
+    );
+    await writeMeta(database, PROFILE_KEY, key);
+    return key;
+  } catch {
+    return null;
+  }
+}
+
+async function encryptProfile(database, profile) {
+  if (!Object.values(profile).some(Boolean)) return null;
+  const key = await getProfileKey(database);
+  if (!key) return null;
+  try {
+    const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
+    const encoded = new TextEncoder().encode(JSON.stringify(profile));
+    const ciphertext = await globalThis.crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoded);
+    return { iv: [...iv], ciphertext: [...new Uint8Array(ciphertext)] };
+  } catch {
+    return null;
+  }
+}
+
+async function decryptProfile(database, payload) {
+  if (!payload || !Array.isArray(payload.iv) || !Array.isArray(payload.ciphertext)) return null;
+  const key = await getProfileKey(database);
+  if (!key) return null;
+  try {
+    const plaintext = await globalThis.crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: new Uint8Array(payload.iv) },
+      key,
+      new Uint8Array(payload.ciphertext),
+    );
+    return JSON.parse(new TextDecoder().decode(plaintext));
+  } catch {
+    return null;
+  }
+}
+
+async function serializeState(database) {
+  const profileCiphertext = await encryptProfile(database, state.profile);
+  return {
+    notes: state.notes,
+    tags: state.tags,
+    conversations: state.conversations,
+    messages: [...state.messages.entries()],
+    ...(profileCiphertext ? { profileCiphertext } : {}),
+    display: state.display,
+    sessionDuration: state.sessionDuration,
+    counters: state.counters,
+  };
+}
+
+function maxId(items) {
+  return items.reduce((max, item) => Math.max(max, Number(item.id) || 0), 0);
+}
+
+async function hydrateState(snapshot, database) {
+  const initial = createInitialState();
+  const messages = Array.isArray(snapshot.messages) ? snapshot.messages : [];
+  const counters = { ...initial.counters, ...(snapshot.counters || {}) };
+  const decryptedProfile = await decryptProfile(database, snapshot.profileCiphertext);
+  const next = {
+    ...initial,
+    ...snapshot,
+    notes: Array.isArray(snapshot.notes) ? snapshot.notes : initial.notes,
+    tags: Array.isArray(snapshot.tags) ? snapshot.tags : initial.tags,
+    conversations: Array.isArray(snapshot.conversations) ? snapshot.conversations : initial.conversations,
+    messages: new Map(messages.map(([id, items]) => [Number(id), Array.isArray(items) ? items : []])),
+    profile: { ...initial.profile, ...(decryptedProfile || snapshot.profile || {}) },
+    display: { ...initial.display, ...(snapshot.display || {}) },
+    counters,
+  };
+  next.counters.note = Math.max(Number(next.counters.note) || 1, maxId(next.notes) + 1);
+  next.counters.tag = Math.max(Number(next.counters.tag) || 1, maxId(next.tags) + 1);
+  next.counters.conversation = Math.max(Number(next.counters.conversation) || 1, maxId(next.conversations) + 1);
+  next.counters.message = Math.max(
+    Number(next.counters.message) || 1,
+    [...next.messages.values()].reduce((max, items) => Math.max(max, maxId(items)), 0) + 1,
+  );
+  state = next;
+}
+
+async function ensureHydrated() {
+  if (hydrated) return;
+  const database = await openDatabase();
+  if (!database) {
+    storageMode = 'memory';
+    hydrated = true;
+    return;
+  }
+
+  try {
+    const snapshot = await readSnapshot(database);
+    storageMode = 'indexeddb';
+    if (snapshot) await hydrateState(snapshot, database);
+    // 将 v1 的明文 profile 快照升级为 AES-GCM 密文；新快照不会再写入明文 profile。
+    if (snapshot?.profile && !snapshot.profileCiphertext) await persistState();
+  } catch {
+    storageMode = 'memory';
+  }
+  hydrated = true;
+}
+
+async function persistState() {
+  if (storageMode !== 'indexeddb') return;
+  const database = await openDatabase();
+  if (!database) {
+    storageMode = 'memory';
+    return;
+  }
+  try {
+    await writeSnapshot(database, await serializeState(database));
+  } catch {
+    // IndexedDB 失败时保留当前页面可用性，后续请求降级为内存模式。
+    storageMode = 'memory';
+  }
+}
+
+function nextId(kind) {
+  const id = state.counters[kind];
+  state.counters[kind] += 1;
+  return id;
 }
 
 function noteWithTags(note) {
@@ -80,7 +311,6 @@ function listNotes(url) {
 
 function listTags() {
   return {
-    // 与 server/modules/notes/service.js 保持同一响应字段：count。
     items: state.tags.map((tag) => ({
       ...tag,
       count: state.notes.filter((note) => note.tagIds.includes(tag.id)).length,
@@ -88,8 +318,7 @@ function listTags() {
   };
 }
 
-/** @param {string} path @param {{method?: string, body?: any}} options */
-export async function offlineRequest(path, options = {}) {
+async function handleRequest(path, options = {}) {
   const method = options.method || 'GET';
   const body = readBody(options.body);
   const url = new URL(path, 'file:///nova-preview/');
@@ -103,7 +332,7 @@ export async function offlineRequest(path, options = {}) {
   if (route === '/api/notes' && method === 'POST') {
     const now = timestamp();
     const note = {
-      id: nextNoteId++,
+      id: nextId('note'),
       title: String(body.title || '未命名笔记'),
       body: String(body.body || ''),
       tagIds: (body.tagIds || []).map(Number),
@@ -137,7 +366,7 @@ export async function offlineRequest(path, options = {}) {
     const name = String(body.name || '未命名标签').trim();
     const existing = state.tags.find((tag) => tag.name === name);
     if (existing) return clone(existing);
-    const tag = { id: nextTagId++, name, createdAt: timestamp() };
+    const tag = { id: nextId('tag'), name, createdAt: timestamp() };
     state.tags.push(tag);
     return tag;
   }
@@ -159,7 +388,8 @@ export async function offlineRequest(path, options = {}) {
     };
   }
   if (route === '/api/chat/conversations' && method === 'POST') {
-    const conversation = { id: nextConversationId++, title: String(body.title || '新对话'), createdAt: timestamp(), updatedAt: timestamp() };
+    const now = timestamp();
+    const conversation = { id: nextId('conversation'), title: String(body.title || '新对话'), createdAt: now, updatedAt: now };
     state.conversations.unshift(conversation);
     state.messages.set(conversation.id, []);
     return clone(conversation);
@@ -173,7 +403,7 @@ export async function offlineRequest(path, options = {}) {
     const messages = state.messages.get(id) || [];
     if (conversationMatch[2] === '/messages' && method === 'GET') return { items: clone(messages) };
     if (conversationMatch[2] === '/messages' && method === 'POST') {
-      const message = { id: nextMessageId++, role: body.role || 'user', content: String(body.content || ''), createdAt: timestamp() };
+      const message = { id: nextId('message'), role: body.role || 'user', content: String(body.content || ''), createdAt: timestamp() };
       messages.push(message);
       state.messages.set(id, messages);
       conversation.updatedAt = timestamp();
@@ -212,7 +442,7 @@ export async function offlineRequest(path, options = {}) {
   }
   if (route === '/api/settings/database' && method === 'GET') {
     return {
-      driver: 'offline-preview',
+      driver: storageMode === 'indexeddb' ? 'indexeddb' : 'memory',
       migrationsVersion: 0,
       encryptionConfigured: false,
       tables: {
@@ -227,19 +457,34 @@ export async function offlineRequest(path, options = {}) {
   return {};
 }
 
-/** 测试和重新打开预览时使用：重置当前页面内存数据，不触碰浏览器持久存储。 */
+/**
+ * 调用本地 API。请求在当前页面串行执行，避免读-改-写快照互相覆盖。
+ * IndexedDB 失败时只影响持久化，不影响本地预览的当前操作。
+ */
+export function offlineRequest(path, options = {}) {
+  const task = operationQueue.then(async () => {
+    await ensureHydrated();
+    const result = await handleRequest(path, options);
+    await persistState();
+    return clone(result);
+  });
+  operationQueue = task.catch(() => {});
+  return task;
+}
+
+/** 读取本地预览数据层状态，用于设置页或诊断信息。 */
+export async function getOfflineStorageInfo() {
+  await ensureHydrated();
+  return { driver: storageMode, persistent: storageMode === 'indexeddb' };
+}
+
+/** 测试和重新打开预览时使用：清空 IndexedDB 快照或内存数据。 */
 export function resetOfflineState() {
-  state.notes = [];
-  state.tags = [];
-  state.conversations = [];
-  state.messages.clear();
-  state.profile = {
-    username: '', name: '', gender: '', age: '', email: '', phone: '', address: '',
-  };
-  state.display = { theme: 'system', language: 'zh-CN' };
-  state.sessionDuration = '8h';
-  nextNoteId = 1;
-  nextTagId = 1;
-  nextConversationId = 1;
-  nextMessageId = 1;
+  const task = operationQueue.then(async () => {
+    await ensureHydrated();
+    state = createInitialState();
+    await persistState();
+  });
+  operationQueue = task.catch(() => {});
+  return task;
 }
