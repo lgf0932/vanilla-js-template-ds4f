@@ -86,12 +86,101 @@
   --header-height: 3.5rem;
   --content-max-width: 75rem;
   --content-padding: var(--spacing-5);
+  --workspace-panel-width: 15rem;
+  --mobile-sidebar-max-width: 85vw;
+  --task-table-min-width: 48rem;
+  --task-title-min-width: 16rem;
 
   /* ---- 过渡 ---- */
   --duration-fast: 120ms;
   --duration-normal: 200ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* ---- 模板主题选项：配置页只切换 data-*，视觉数值仍集中在 token 文件 ---- */
+[data-base-color="neutral"] {
+  --primary: 222 47% 11%;
+  --primary-foreground: 210 40% 98%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+}
+[data-base-color="stone"] {
+  --primary: 24 10% 10%;
+  --primary-foreground: 60 9% 98%;
+  --accent: 60 5% 96%;
+  --accent-foreground: 24 10% 10%;
+  --border: 24 6% 90%;
+  --input: 24 6% 90%;
+}
+[data-base-color="mauve"] {
+  --primary: 280 10% 15%;
+  --primary-foreground: 280 10% 98%;
+  --accent: 280 10% 95%;
+  --accent-foreground: 280 10% 15%;
+  --border: 280 7% 89%;
+  --input: 280 7% 89%;
+}
+[data-base-color="olive"] {
+  --primary: 82 35% 18%;
+  --primary-foreground: 80 20% 98%;
+  --accent: 80 20% 94%;
+  --accent-foreground: 82 35% 18%;
+  --border: 80 12% 87%;
+  --input: 80 12% 87%;
+}
+[data-base-color="mist"] {
+  --primary: 200 26% 18%;
+  --primary-foreground: 200 20% 98%;
+  --accent: 200 20% 94%;
+  --accent-foreground: 200 26% 18%;
+  --border: 200 14% 88%;
+  --input: 200 14% 88%;
+}
+[data-base-color="taupe"] {
+  --primary: 30 15% 18%;
+  --primary-foreground: 30 20% 98%;
+  --accent: 30 15% 94%;
+  --accent-foreground: 30 15% 18%;
+  --border: 30 10% 88%;
+  --input: 30 10% 88%;
+}
+
+[data-chart-color="amber"] { --chart-1: 38 92% 50%; --chart-2: 24 95% 53%; }
+[data-chart-color="blue"] { --chart-1: 217 91% 60%; --chart-2: 199 89% 48%; }
+[data-chart-color="cyan"] { --chart-1: 189 94% 43%; --chart-2: 187 85% 53%; }
+[data-chart-color="emerald"] { --chart-1: 160 84% 39%; --chart-2: 142 71% 45%; }
+[data-chart-color="fuchsia"] { --chart-1: 292 84% 61%; --chart-2: 326 78% 60%; }
+[data-chart-color="green"] { --chart-1: 142 71% 45%; --chart-2: 84 81% 44%; }
+[data-chart-color="indigo"] { --chart-1: 239 84% 67%; --chart-2: 221 83% 53%; }
+[data-chart-color="lime"] { --chart-1: 84 81% 44%; --chart-2: 45 93% 47%; }
+[data-chart-color="orange"] { --chart-1: 24 95% 53%; --chart-2: 38 92% 50%; }
+[data-chart-color="pink"] { --chart-1: 330 81% 60%; --chart-2: 346 77% 49%; }
+[data-chart-color="purple"] { --chart-1: 271 81% 56%; --chart-2: 262 83% 58%; }
+[data-chart-color="red"] { --chart-1: 0 84% 60%; --chart-2: 12 76% 61%; }
+[data-chart-color="rose"] { --chart-1: 350 89% 60%; --chart-2: 329 86% 70%; }
+[data-chart-color="sky"] { --chart-1: 199 89% 48%; --chart-2: 188 86% 53%; }
+[data-chart-color="teal"] { --chart-1: 173 80% 40%; --chart-2: 160 84% 39%; }
+[data-chart-color="violet"] { --chart-1: 262 83% 58%; --chart-2: 271 81% 56%; }
+[data-chart-color="yellow"] { --chart-1: 45 93% 47%; --chart-2: 38 92% 50%; }
+[data-chart-color="zinc"] { --chart-1: 240 5.9% 10%; --chart-2: 240 3.8% 46.1%; }
+
+[data-radius="none"] { --radius: 0; --radius-sm: 0; --radius-lg: 0; }
+[data-radius="sm"] { --radius: 0.25rem; --radius-sm: 0.125rem; --radius-lg: 0.375rem; }
+[data-radius="md"] { --radius: 0.5rem; --radius-sm: 0.375rem; --radius-lg: 0.625rem; }
+[data-radius="lg"] { --radius: 0.75rem; --radius-sm: 0.5rem; --radius-lg: 0.875rem; }
+[data-radius="full"] { --radius: 9999px; --radius-sm: 9999px; --radius-lg: 9999px; }
+[data-radius="default"] { --radius: 0.5rem; --radius-sm: 0.375rem; --radius-lg: 0.625rem; }
+
+[data-body-font="system"] { --font-sans: system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif; }
+[data-body-font="inter"] { --font-sans: "Inter", system-ui, sans-serif; }
+[data-body-font="manrope"] { --font-sans: "Manrope", system-ui, sans-serif; }
+[data-heading-font="system"] { --font-heading: system-ui, sans-serif; }
+[data-heading-font="inter"] { --font-heading: "Inter", system-ui, sans-serif; }
+[data-heading-font="manrope"] { --font-heading: "Manrope", system-ui, sans-serif; }
+[data-menu-appearance="translucent"] { --menu-opacity: 0.82; }
+[data-menu-appearance="solid"] { --menu-opacity: 1; }
 
 [data-theme="dark"] {
   --background: 240 10% 3.9%;

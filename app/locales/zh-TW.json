@@ -36,14 +36,21 @@
   },
   "sidebar": {
     "brand": "Nova",
+    "workspaces": "工作空間",
+    "profileHint": "開啟使用者資料",
     "empty": "暫無選單項目",
     "dashboard": "儀錶板",
     "notes": "筆記",
     "chat": "對話",
+    "tasks": "任務",
+    "apps": "應用整合",
+    "chats": "AI 聊天",
+    "docs": "文件",
     "settings": "設定",
     "submodules": {
       "notes": { "list": "全部筆記", "tags": "標籤" },
-      "settings": { "profile": "個人資料", "display": "顯示", "security": "安全", "database": "資料庫" }
+      "settings": { "profile": "個人資料", "account": "帳戶", "appearance": "外觀", "notifications": "通知", "display": "顯示", "llm": "大模型", "security": "安全", "database": "資料庫" },
+      "docs": { "introduction": "簡介", "get-started": "快速開始", "tutorials": "教學", "changelog": "更新日誌" }
     }
   },
   "dashboard": {

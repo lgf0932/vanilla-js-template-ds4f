@@ -17,6 +17,7 @@ import { registerAuthRoutes } from './modules/auth/routes.js';
 import { registerSettingsRoutes } from './modules/settings/routes.js';
 import { registerNotesRoutes } from './modules/notes/routes.js';
 import { registerChatRoutes } from './modules/chat/routes.js';
+import { registerChatsRoutes } from './modules/chats/routes.js';
 
 /**
  * 创建完整应用（幂等：同一 env 对象在进程内只初始化一次，见 handleRequest 的缓存）。
@@ -34,6 +35,7 @@ export async function createApp(env = {}) {
   registerSettingsRoutes(router, app);
   registerNotesRoutes(router, app);
   registerChatRoutes(router, app);
+  registerChatsRoutes(router, app);
 
   const handleRequest = createHandler({ router, app });
   return { ...app, router, handleRequest };

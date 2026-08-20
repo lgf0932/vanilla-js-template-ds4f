@@ -36,14 +36,21 @@
   },
   "sidebar": {
     "brand": "Nova",
+    "workspaces": "Workspaces",
+    "profileHint": "Open your profile",
     "empty": "No menu items",
     "dashboard": "Dashboard",
     "notes": "Notes",
     "chat": "Chat",
+    "tasks": "Tasks",
+    "apps": "App integrations",
+    "chats": "AI chat",
+    "docs": "Docs",
     "settings": "Settings",
     "submodules": {
       "notes": { "list": "All Notes", "tags": "Tags" },
-      "settings": { "profile": "Profile", "display": "Display", "security": "Security", "database": "Database" }
+      "settings": { "profile": "Profile", "account": "Account", "appearance": "Appearance", "notifications": "Notifications", "display": "Display", "llm": "LLM models", "security": "Security", "database": "Database" },
+      "docs": { "introduction": "Introduction", "get-started": "Get started", "tutorials": "Tutorials", "changelog": "Changelog" }
     }
   },
   "dashboard": {

@@ -36,14 +36,21 @@
   },
   "sidebar": {
     "brand": "Nova",
+    "workspaces": "工作空间",
+    "profileHint": "打开个人资料",
     "empty": "暂无菜单项",
     "dashboard": "仪表盘",
     "notes": "笔记",
     "chat": "对话",
+    "tasks": "任务",
+    "apps": "应用集成",
+    "chats": "AI 聊天",
+    "docs": "文档",
     "settings": "设置",
     "submodules": {
       "notes": { "list": "全部笔记", "tags": "标签" },
-      "settings": { "profile": "个人资料", "display": "显示", "security": "安全", "database": "数据库" }
+      "settings": { "profile": "个人资料", "account": "账户", "appearance": "外观", "notifications": "通知", "display": "显示", "llm": "大模型", "security": "安全", "database": "数据库" },
+      "docs": { "introduction": "简介", "get-started": "快速开始", "tutorials": "教程", "changelog": "更新日志" }
     }
   },
   "dashboard": {

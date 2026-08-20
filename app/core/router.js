@@ -23,6 +23,7 @@ class Router {
   constructor() {
     /** @type {Map<string, {path:string, mount:(viewport:HTMLElement)=>Promise<void>|void}>} */
     this.routes = new Map();
+    this.viewport = null;
     this.currentPath = currentLocationPath();
     this.onUnmatched = null;
 
@@ -73,7 +74,7 @@ class Router {
       return;
     }
 
-    const { viewport } = entry;
+    const viewport = entry.viewport || this.viewport;
     if (!viewport) return;
     try {
       await entry.mount(viewport);

@@ -10,8 +10,12 @@
 /** 懒加载各模块的 module.config.js（决定侧边栏与路由表） */
 export const moduleLoaders = {
   dashboard: () => import('./dashboard/module.config.js'),
+  tasks: () => import('./tasks/module.config.js'),
   notes: () => import('./notes/module.config.js'),
+  apps: () => import('./apps/module.config.js'),
   chat: () => import('./chat/module.config.js'),
+  chats: () => import('./chats/module.config.js'),
+  docs: () => import('./docs/module.config.js'),
   settings: () => import('./settings/module.config.js'),
 };
 

@@ -107,6 +107,7 @@ function mountApp() {
   const el = document.createElement('app-shell');
   shell = el;
   root.replaceChildren(el);
+  router.viewport = el.viewport;
   el.setMenu(menu);
   router.render();
 }

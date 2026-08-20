@@ -6,6 +6,7 @@
 
 import { define, attachTemplate, qs, emit, escapeHtml } from '../ui/base.js';
 import { i18n, t } from '../../core/i18n.js';
+import { preferences } from '../../core/preferences.js';
 
 class AppHeader extends HTMLElement {
   connectedCallback() {
@@ -13,16 +14,24 @@ class AppHeader extends HTMLElement {
     attachTemplate(this, TEMPLATE);
     this._crumbs = qs(this.shadowRoot, '.crumbs');
     this._userName = qs(this.shadowRoot, '.user-name');
+    this._userAvatar = qs(this.shadowRoot, '.avatar');
 
     qs(this.shadowRoot, '.hamburger').addEventListener('click', () => {
       emit(this, 'menu-toggle', {});
     });
     this._unsubscribeI18n = i18n.onChange(() => this.render());
-    this.render();
+    this._unsubscribePreferences = preferences.subscribe((state) => this.setPreferences(state));
+    this.setPreferences(preferences.getState());
   }
 
   disconnectedCallback() {
     this._unsubscribeI18n?.();
+    this._unsubscribePreferences?.();
+  }
+
+  setPreferences(state) {
+    this._preferences = state || preferences.getState();
+    this.render();
   }
 
   /** @param {Array<{label:string, href?:string}>} crumbs */
@@ -33,7 +42,14 @@ class AppHeader extends HTMLElement {
 
   render() {
     if (!this._crumbs) return;
-    this._userName.textContent = t('common.role.admin');
+    const profile = this._preferences?.profile || {};
+    const name = profile.username || profile.name || t('common.role.admin');
+    this._userName.textContent = name;
+    if (this._userAvatar) {
+      this._userAvatar.textContent = profile.avatar?.type === 'emoji' && profile.avatar.value
+        ? profile.avatar.value
+        : String(name).trim().slice(0, 1).toUpperCase() || 'N';
+    }
     if (!this._breadcrumb?.length) {
       this._crumbs.innerHTML = '';
       return;
@@ -70,9 +86,9 @@ const TEMPLATE = `
   .crumb-sep { color: hsl(var(--muted-foreground)); }
   .spacer { flex: 1; }
   .user { display: flex; align-items: center; gap: var(--spacing-2); padding: var(--spacing-1) var(--spacing-2);
-    border-radius: var(--radius-full); }
-  .avatar { width: 1.75rem; height: 1.75rem; border-radius: var(--radius-full); display: inline-flex; align-items: center;
-    justify-content: center; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+    border-radius: var(--radius-full); color: hsl(var(--foreground)); }
+  .avatar { width: var(--spacing-8); height: var(--spacing-8); border-radius: var(--radius-full); display: inline-flex; align-items: center;
+    justify-content: center; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); font-size: var(--text-sm); font-weight: 600; }
   .user-name { font-size: var(--text-xs); font-weight: 500; }
   @media (max-width: 39.99rem) { .hamburger { display: inline-flex; } .user-name { display: none; } }
 </style>
