@@ -42,6 +42,37 @@
     "chat": "对话",
     "settings": "设置"
   },
+  "dashboard": {
+    "title": "仪表盘",
+    "greeting": "欢迎使用 Nova",
+    "stats": { "notes": "笔记", "chats": "对话" },
+    "recentNotes": "最近笔记",
+    "recentChats": "最近对话",
+    "recentNotesEmpty": "暂无笔记",
+    "recentChatsEmpty": "暂无对话",
+    "emptyHint": "创建第一个开始使用"
+  },
+  "notes": {
+    "title": "笔记",
+    "list": { "title": "全部笔记", "empty": "暂无笔记", "emptyHint": "创建你的第一条笔记" },
+    "tags": { "title": "标签", "empty": "暂无标签", "emptyHint": "创建标签来整理笔记" }
+  },
+  "chat": {
+    "title": "对话",
+    "empty": "暂无对话",
+    "emptyHint": "开始一段新对话",
+    "newConversation": "新对话",
+    "placeholder": "输入消息…",
+    "send": "发送",
+    "noMessages": "发送消息开始对话"
+  },
+  "settings": {
+    "title": "设置",
+    "profile": { "title": "个人资料" },
+    "display": { "title": "显示" },
+    "security": { "title": "安全" },
+    "database": { "title": "数据库" }
+  },
   "auth": {
     "title": "欢迎回来",
     "subtitle": "输入管理密码以继续",

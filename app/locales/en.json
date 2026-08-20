@@ -42,6 +42,37 @@
     "chat": "Chat",
     "settings": "Settings"
   },
+  "dashboard": {
+    "title": "Dashboard",
+    "greeting": "Welcome to Nova",
+    "stats": { "notes": "Notes", "chats": "Conversations" },
+    "recentNotes": "Recent Notes",
+    "recentChats": "Recent Conversations",
+    "recentNotesEmpty": "No notes yet",
+    "recentChatsEmpty": "No conversations yet",
+    "emptyHint": "Create your first one to get started"
+  },
+  "notes": {
+    "title": "Notes",
+    "list": { "title": "All Notes", "empty": "No notes yet", "emptyHint": "Create your first note" },
+    "tags": { "title": "Tags", "empty": "No tags yet", "emptyHint": "Create a tag to organize notes" }
+  },
+  "chat": {
+    "title": "Chat",
+    "empty": "No conversations",
+    "emptyHint": "Start a new conversation",
+    "newConversation": "New Conversation",
+    "placeholder": "Type a message…",
+    "send": "Send",
+    "noMessages": "Send a message to start the conversation"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": { "title": "Profile" },
+    "display": { "title": "Display" },
+    "security": { "title": "Security" },
+    "database": { "title": "Database" }
+  },
   "auth": {
     "title": "Welcome back",
     "subtitle": "Enter the admin password to continue",

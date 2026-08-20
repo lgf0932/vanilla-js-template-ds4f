@@ -42,6 +42,37 @@
     "chat": "對話",
     "settings": "設定"
   },
+  "dashboard": {
+    "title": "儀錶板",
+    "greeting": "歡迎使用 Nova",
+    "stats": { "notes": "筆記", "chats": "對話" },
+    "recentNotes": "最近筆記",
+    "recentChats": "最近對話",
+    "recentNotesEmpty": "暫無筆記",
+    "recentChatsEmpty": "暫無對話",
+    "emptyHint": "建立第一個開始使用"
+  },
+  "notes": {
+    "title": "筆記",
+    "list": { "title": "全部筆記", "empty": "暫無筆記", "emptyHint": "建立你的第一條筆記" },
+    "tags": { "title": "標籤", "empty": "暫無標籤", "emptyHint": "建立標籤來整理筆記" }
+  },
+  "chat": {
+    "title": "對話",
+    "empty": "暫無對話",
+    "emptyHint": "開始一段新對話",
+    "newConversation": "新對話",
+    "placeholder": "輸入訊息…",
+    "send": "傳送",
+    "noMessages": "傳送訊息開始對話"
+  },
+  "settings": {
+    "title": "設定",
+    "profile": { "title": "個人資料" },
+    "display": { "title": "顯示" },
+    "security": { "title": "安全" },
+    "database": { "title": "資料庫" }
+  },
   "auth": {
     "title": "歡迎回來",
     "subtitle": "輸入管理密碼以繼續",
