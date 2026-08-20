@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { resolveDriver } from './resolver.js';
 
 test('显式 DB_DRIVER 永远优先生效', () => {
@@ -23,4 +24,12 @@ test('开发环境默认 sqlite', () => {
 
 test('其余生产部署（Vercel/Deno/Docker）默认 turso', () => {
   assert.equal(resolveDriver({ NODE_ENV: 'production' }), 'turso');
+});
+
+test('边缘 bundle：数据库解析链不静态导入 Node builtins', () => {
+  const files = ['resolver.js', 'migrate.js', 'adapters/sqlite.adapter.js'];
+  for (const file of files) {
+    const source = readFileSync(new URL(`./${file}`, import.meta.url), 'utf8');
+    assert.doesNotMatch(source, /^\s*import\s+.*from\s+["']node:/m, file);
+  }
 });

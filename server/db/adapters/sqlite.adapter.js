@@ -4,15 +4,27 @@
  * 路径 ':memory:' 用于测试；文件型自动建目录。
  */
 
-import { DatabaseSync } from 'node:sqlite';
-import { mkdirSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+/**
+ * Node 22-only builtins are resolved only when the SQLite driver is selected.
+ * Keeping these out of static imports lets edge bundlers omit node:sqlite.
+ */
+function getNodeBuiltin(name) {
+  const nodeProcess = globalThis.process;
+  if (!nodeProcess || typeof nodeProcess.getBuiltinModule !== 'function') {
+    throw new Error('SQLite adapter requires Node.js 22 with process.getBuiltinModule()');
+  }
+  return nodeProcess.getBuiltinModule(name);
+}
 
 /**
  * @param {{ path?: string }} [opts] path=数据库文件路径（默认 ./data/dev.sqlite）
  * @returns {import('../adapter.interface.js').DBAdapter}
  */
 export function createSqliteAdapter({ path = './data/dev.sqlite' } = {}) {
+  const { DatabaseSync } = getNodeBuiltin('node:sqlite');
+  const { mkdirSync } = getNodeBuiltin('node:fs');
+  const { dirname, resolve } = getNodeBuiltin('node:path');
+
   if (path !== ':memory:') {
     mkdirSync(dirname(resolve(path)), { recursive: true });
   }

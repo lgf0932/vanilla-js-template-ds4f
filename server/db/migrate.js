@@ -7,12 +7,23 @@
  *  - 迁移文件只增不改（AGENTS 红线 #10），新变更一律新建下一序号文件
  */
 
-import { readdirSync, readFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { SELECT_SETTING, UPSERT_SETTING } from './query/settings.queries.js';
 
-const MIGRATIONS_DIR = join(dirname(fileURLToPath(import.meta.url)), 'migrations');
+/**
+ * Node's migration file access is resolved only when available. Edge runtimes
+ * apply migrations through their platform CLI before deployment and skip this
+ * local filesystem fallback instead of bundling node:fs/node:path/node:url.
+ */
+function getNodeMigrationContext() {
+  const nodeProcess = globalThis.process;
+  if (!nodeProcess || typeof nodeProcess.getBuiltinModule !== 'function') return null;
+
+  const fs = nodeProcess.getBuiltinModule('node:fs');
+  const path = nodeProcess.getBuiltinModule('node:path');
+  const url = nodeProcess.getBuiltinModule('node:url');
+  const migrationsDir = path.join(path.dirname(url.fileURLToPath(import.meta.url)), 'migrations');
+  return { fs, path, migrationsDir };
+}
 
 async function readApplied(db) {
   let raw = '';
@@ -37,7 +48,11 @@ async function readApplied(db) {
  * @returns {Promise<string[]>} 本次应用的迁移名列表
  */
 export async function ensureMigrated(db) {
-  const files = readdirSync(MIGRATIONS_DIR)
+  const nodeContext = getNodeMigrationContext();
+  if (!nodeContext) return [];
+
+  const { fs, path, migrationsDir } = nodeContext;
+  const files = fs.readdirSync(migrationsDir)
     .filter((f) => f.endsWith('.sql'))
     .sort();
   const applied = await readApplied(db);
@@ -47,7 +62,7 @@ export async function ensureMigrated(db) {
     const name = file.replace(/\.sql$/, '');
     if (applied.includes(name)) continue;
 
-    const sql = readFileSync(join(MIGRATIONS_DIR, file), 'utf8'); // 仓库自有文件，非用户输入
+    const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8'); // 仓库自有文件，非用户输入
     await db.transaction(async (tx) => {
       await tx.exec(sql);
       await tx.execute(UPSERT_SETTING, ['settings:migrations:version', JSON.stringify([...applied, name]), new Date().toISOString()]);

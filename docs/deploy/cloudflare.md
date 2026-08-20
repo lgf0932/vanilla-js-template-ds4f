@@ -101,7 +101,7 @@ npx wrangler@latest d1 migrations list freebuff-nova --remote --config wrangler.
 npx wrangler@latest d1 migrations apply freebuff-nova --remote --config wrangler.toml
 ```
 
-应用启动时也会执行兼容性迁移检查，但生产发布前仍建议显式完成 D1 migration。新增数据库变更必须创建下一个序号的迁移文件，禁止修改已经发布的 SQL。
+Cloudflare Worker 运行时无法读取仓库本地迁移目录，生产 schema 由 GitHub Actions/CLI 在发布前显式执行 D1 migration；Node 本地入口仍保留启动时的幂等迁移检查。新增数据库变更必须创建下一个序号的迁移文件，禁止修改已经发布的 SQL。
 
 ## 6. GitHub Actions
 
@@ -159,4 +159,4 @@ curl -i https://<your-domain>/api/auth/status
 - `ENCRYPTION_KEY is required`：在 Secret 中配置，不能只写在 `[vars]` 或提交到仓库。
 - 前端路径 404：检查 Pages 静态输出是否为 `dist`，以及 Worker/Pages 是否配置了非 `/api/*` 的静态资源处理。
 - Wrangler 找不到迁移：确认 `migrations_dir = "server/db/migrations"` 已配置，并使用与当前 Wrangler 版本匹配的 migration 命令。
-- `node:*` 模块兼容性错误：当前业务核心会静态加载 Node SQLite/文件系统适配器；若 Workers 构建器报告 Node 内置模块错误，应先完成针对 Workers 的适配重构，不要仅靠切换 `DB_DRIVER` 绕过静态导入。
+- `node:*` 模块兼容性错误：当前 resolver、迁移 runner 和 SQLite 适配器不会静态导入 Node builtins；确认部署使用包含该修复的 ref，并保持 Cloudflare 使用 D1。不要把 `DB_DRIVER=sqlite` 用于 Workers。

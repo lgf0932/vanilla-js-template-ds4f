@@ -292,6 +292,8 @@ export async function handleRequest(request, env) { /* server/app.js 组装的�
 
 > 说明：Docker/VPS 场景默认也选 Turso，是为了保持"部署产物无本地状态、可随时水平扩展/重建实例"的一致性；若用户明确需要 VPS 本地持久化 SQLite（有持久卷），可用 `DB_DRIVER=sqlite` 显式覆盖。
 
+**跨平台 bundle 约束**：`resolver.js`、`migrate.js` 与 SQLite 适配器不静态导入 `node:*` 模块。只有 Node 运行时实际选择 SQLite 时，才通过 `process.getBuiltinModule()` 获取 `node:sqlite`、文件系统和路径能力；Cloudflare/Deno 的边缘 bundle 因此不会携带 Node SQLite。Cloudflare/Deno 发布前必须由 Wrangler/安全环境显式执行迁移，边缘运行时不扫描本地迁移目录。
+
 **无 ORM，SQL-first**：迁移文件是纯 `.sql`（`server/db/migrations/000x_*.sql`），一个极简迁移 runner 把已执行版本记录在 `app_settings` 的 `settings:migrations:version`；查询语句集中放在各模块的 `server/db/query/*.queries.js`，一律参数化，禁止字符串拼接 SQL。
 
 ### 4.5 数据规范
@@ -374,8 +376,8 @@ export async function handleRequest(request, env) { /* server/app.js 组装的�
 ### GitHub Actions 流水线（分文件，文档速览）
 
 - `ci.yml`：push/PR 触发，串联 `deps:check → lint → test → i18n:check → build:budget`；
-- `deploy-cloudflare.yml` / `deploy-vercel.yml` / `deploy-deno.yml`：合并进 `main` 分支后各自触发对应平台部署；
-- `docker-publish.yml`：打 tag 时构建镜像并推送到 GHCR，供 VPS 端 `docker pull` + `docker compose up -d` 拉取更新。
+- `deploy-cloudflare.yml` / `deploy-vercel.yml` / `deploy-deno.yml`：推送 `v*` tag 或 Actions 手动指定 `ref` 时，分别执行源码校验、构建和对应平台部署；
+- `docker-publish.yml`：推送 `v*` tag 或手动指定 `ref` 时构建镜像并推送到 GHCR，供 VPS 端 `docker pull` + `docker run` 拉取更新。
 
 ---
 

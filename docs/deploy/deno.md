@@ -75,7 +75,7 @@ TURSO_AUTH_TOKEN="$TURSO_AUTH_TOKEN" \
 node scripts/db-migrate.js
 ```
 
-部署后的应用也会执行幂等迁移检查，但显式预迁移能避免首次请求触发 schema 初始化。已发布迁移只增不改；禁止在生产环境运行 `node scripts/db-reset.js`。
+Deno Deploy 运行时不能读取仓库本地迁移目录，因此必须在部署前从安全环境显式运行迁移；这样也能避免首次请求触发 schema 初始化。已发布迁移只增不改；禁止在生产环境运行 `node scripts/db-reset.js`。
 
 ## 5. GitHub Actions
 
@@ -102,7 +102,7 @@ Turso、`ENCRYPTION_KEY` 和 `AUTH_PASSWORD_HASH` 应配置在 Deno Deploy 项�
 deno run --allow-net --allow-read --allow-env server/adapters/deno.entry.js
 ```
 
-当前仓库的数据库 resolver 会静态加载 SQLite 适配器，而 SQLite 适配器使用 Node 22 的 `node:sqlite`。即使生产选择 `DB_DRIVER=turso`，某些 Deno 版本/构建器仍可能在加载阶段报告 `node:sqlite` 不可用。若出现该错误，不要仅通过修改环境变量绕过；需要先完成 Deno 专用的动态适配器/迁移重构，再部署到 Deno。
+当前 resolver、迁移 runner 和 SQLite 适配器不会静态导入 Node builtins；SQLite 的 Node 22 builtin 只会在显式选择 `DB_DRIVER=sqlite` 且运行于 Node 时通过 `process.getBuiltinModule()` 获取。Deno 默认使用 `DB_DRIVER=turso`，不要在 Deno 中切换到 SQLite；如果仍看到 `node:sqlite` 错误，请确认部署使用包含该修复的 ref。
 
 ## 7. 验证、域名与回滚
 
